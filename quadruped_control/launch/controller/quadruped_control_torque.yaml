@@ -1,0 +1,71 @@
+quadruped:
+  # Publish all joint states -----------------------------------
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 1000
+
+  # Effort Controllers ---------------------------------------
+
+  # First Left Leg
+  FL_hip_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_forward_motor_leg
+    pid:  {p: 5, i: 0.0, d: 2}
+
+  FL_thigh_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_forward_leg_hip
+    pid: {p: 5, i: 0.0, d: 2}
+
+  FL_calf_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_forward_hip_calf
+    pid: {p: 5, i: 0.0, d: 2}
+
+  # First Right Leg
+  FR_hip_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_forward_motor_leg
+    pid:  {p: 5, i: 0.0, d: 2}
+
+  FR_thigh_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_forward_leg_hip
+    pid: {p: 5, i: 0.0, d: 2}
+
+  FR_calf_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_forward_hip_calf
+    pid: {p: 5, i: 0.0, d: 2}
+
+  #Back Left Leg
+  RL_hip_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_back_motor_leg
+    pid:  {p: 5, i: 0.0, d: 2}
+
+  RL_thigh_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_back_leg_hip
+    pid: {p: 5, i: 0.0, d: 2}
+
+  RL_calf_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: left_back_hip_calf
+    pid: {p: 5, i: 0.0, d: 2}
+
+  # Back Right Leg
+  RR_hip_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_back_motor_leg
+    pid:  {p: 5, i: 0.0, d: 2}
+
+  RR_thigh_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_back_leg_hip
+    pid: {p: 5, i: 0.0, d: 2}
+
+  RR_calf_Effort_controller:
+    type: effort_controllers/JointEffortController
+    joint: right_back_hip_calf
+    pid: {p: 5, i: 0.0, d: 2}      

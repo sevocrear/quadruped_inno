@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+	</include>
+
+	<param name="robot_description" command="xacro --inorder '$(find quadruped_robot)/urdf/quadruped_robot.urdf'"/>
+<!---->	
+	<node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" 
+		args="-urdf -model quadruped_robot -param robot_description">
+	</node>
+					
+</launch>
