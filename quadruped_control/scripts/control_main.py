@@ -18,7 +18,7 @@ if __name__ == '__main__':
 		try:
 			if not cheetah_control_pos.joints_positions:
 				continue
-			for i in range(0,6,3):
+			for i in range(0,12,3):
 				idx = 0+i,1+i,2+i
 				torque_0 = K[0]*(goal[idx[0]]-cheetah_control_pos.joints_positions[cheetah_control_pos.joints[joints[idx[0]]][0]]) + d[0]*(0-cheetah_control_pos.joints_velocities[cheetah_control_pos.joints[joints[idx[0]]][0]])
 

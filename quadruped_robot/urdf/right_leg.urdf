@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="quadruped_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+<!-- RIGHT BACK MOTOR -->
+
+    <xacro:macro name="right_motor" params="link_prefix joint_xyz joint_rpy">
+      <link
+    name="${link_prefix}_motor">
+    <inertial>
+      <origin
+        xyz="2.4016E-06 0.00012687 -0.01825"
+        rpy="0 0 0" />
+      <mass
+        value="1.7721" />
+      <inertia
+        ixx="0.0011015"
+        ixy="-3.5575E-20"
+        ixz="-7.1348E-21"
+        iyy="0.0011135"
+        iyz="7.75E-06"
+        izz="0.0018907" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_motor.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.098039 0.098039 0.098039 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_motor.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="body_${link_prefix}_motor"
+    type="fixed">
+    <origin
+      xyz="${joint_xyz}"
+      rpy="${joint_rpy}" />
+    <parent
+      link="body" />
+    <child
+      link="${link_prefix}_motor" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  </xacro:macro>
+
+
+  <!-- LEFT LEG -->
+  <xacro:macro name="right_leg" params="link_prefix joint_xyz joint_rpy">
+  <link
+    name="${link_prefix}_leg">
+    <inertial>
+      <origin
+        xyz="-0.0029169 0.00012334 -0.001118"
+        rpy="0 0 0" />
+      <mass
+        value="1.8229" />
+      <inertia
+        ixx="0.001944"
+        ixy="7.75E-06"
+        ixz="2.2033E-11"
+        iyy="0.0011302"
+        iyz="5.9432E-11"
+        izz="0.0011544" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_leg.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.93725 0.13725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_leg.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="${link_prefix}_motor_leg"
+    type="revolute">
+    <origin
+      xyz="${joint_xyz}"
+      rpy="${joint_rpy}" />
+    <parent
+      link="${link_prefix}_motor" />
+    <child
+      link="${link_prefix}_leg" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.78"
+      upper="0.78"
+      effort="24"
+      velocity="50" />
+  </joint>
+  </xacro:macro>
+
+  <!--  RIGHT HIP -->
+  <xacro:macro name="right_hip" params="link_prefix joint_xyz joint_rpy">
+  <link
+    name="${link_prefix}_hip">
+    <inertial>
+      <origin
+        xyz="-0.00011894 0.010505 0.036923"
+        rpy="0 0 0" />
+      <mass
+        value="2.1015" />
+      <inertia
+        ixx="0.0025944"
+        ixy="2.612E-05"
+        ixz="4.1998E-06"
+        iyy="0.0012986"
+        iyz="1.2724E-05"
+        izz="0.0035306" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.93725 0.13725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="${link_prefix}_leg_hip"
+    type="revolute">
+    <origin
+      xyz="${joint_xyz}"
+      rpy="${joint_rpy}"/>
+    <parent
+      link="${link_prefix}_leg" />
+    <child
+      link="${link_prefix}_hip" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.04"
+      upper="1.04"
+      effort="24"
+      velocity="50" />
+  </joint>
+  </xacro:macro>
+
+
+  <!-- LEFT CALF -->
+  <xacro:macro name="right_calf" params="link_prefix joint_xyz joint_rpy">
+  <link
+    name="${link_prefix}_calf">
+    <inertial>
+      <origin
+        xyz="0.003150209581748 0.0608714249947071 0.0130084906327194"
+        rpy="0 0 0" />
+      <mass
+        value="0.127515079557877" />
+      <inertia
+        ixx="0.000303098852949925"
+        ixy="1.05255877952204E-07"
+        ixz="-2.21457843605232E-09"
+        iyy="3.2900798128141E-05"
+        iyz="-7.2739197105815E-08"
+        izz="0.000320609420741168" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.101960784313725 0.101960784313725 0.101960784313725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="${link_prefix}_hip_calf"
+    type="revolute">
+    <origin
+      xyz="${joint_xyz}"
+      rpy="${joint_rpy}"/>
+    <parent
+      link="${link_prefix}_hip" />
+    <child
+      link="${link_prefix}_calf" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="${link_prefix}_foot">
+    <inertial>
+      <origin
+        xyz="2.67734406894649E-07 -0.0143807830353894 -1.27018434094295E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0424093690699508" />
+      <inertia
+        ixx="1.41888803190933E-05"
+        ixy="-2.89152058115048E-10"
+        ixz="-3.96352551681418E-11"
+        iyy="8.6512128643686E-06"
+        iyz="3.97404573019817E-09"
+        izz="1.41178047876361E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_foot.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_foot.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="${link_prefix}_calf_foot"
+    type="fixed">
+    <origin
+      xyz="0.003139 0.17761 0.013"
+      rpy="0 0 3.1416" />
+    <parent
+      link="${link_prefix}_calf" />
+    <child
+      link="${link_prefix}_foot" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  </xacro:macro>
+
+</robot>

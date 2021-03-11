@@ -16,17 +16,17 @@ class cheetah_control():
                     'FL_thigh' : ['left_forward_leg_hip'], 
                      'FL_calf' : ['left_forward_hip_calf'],
 
-                    #    'FR_hip' : ['right_forward_motor_leg'], 
-                    #  'FR_thigh' : ['right_forward_leg_hip'], 
-                    #   'FR_calf' : ['right_forward_hip_calf'],
+                       'FR_hip' : ['right_forward_motor_leg'], 
+                     'FR_thigh' : ['right_forward_leg_hip'], 
+                      'FR_calf' : ['right_forward_hip_calf'],
 
                        'RL_hip': ['left_back_motor_leg'],
                      'RL_thigh': ['left_back_leg_hip'], 
                       'RL_calf': ['left_back_hip_calf'],
 
-                    #    'RR_hip' : ['right_back_motor_leg'], 
-                    #  'RR_thigh' : ['right_back_leg_hip'], 
-                    #    'RR_calf': ['right_back_hip_calf']
+                       'RR_hip' : ['right_back_motor_leg'], 
+                     'RR_thigh' : ['right_back_leg_hip'], 
+                       'RR_calf': ['right_back_hip_calf']
                     }
 
         if type_of_control == 'position':

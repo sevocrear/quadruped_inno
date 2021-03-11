@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <robot name="quadruped_robot" xmlns:xacro="http://ros.org/wiki/xacro">
 <xacro:include filename="$(find quadruped_robot)/urdf/quadruped_robot.urdf"/>
-  
+  <transmission name="tran0">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_forward_motor_leg">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="FR_hip_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>9</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran1">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_forward_leg_hip">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="FR_thigh_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>9</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_forward_hip_calf">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="FR_calf_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>6</mechanicalReduction>
+    </actuator>
+  </transmission>
   <transmission name="tran3">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_forward_motor_leg">
@@ -10,7 +42,7 @@
     <actuator name="FL_hip_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>9</mechanicalReduction>
     </actuator>
   </transmission>
   <transmission name="tran4">
@@ -21,7 +53,7 @@
     <actuator name="FL_thigh_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>9</mechanicalReduction>
     </actuator>
   </transmission>
   <transmission name="tran5">
@@ -32,10 +64,42 @@
     <actuator name="FL_calf_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>6</mechanicalReduction>
     </actuator>
   </transmission>
-  
+  <transmission name="tran6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_back_motor_leg">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="RR_hip_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>9</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_back_leg_hip">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="RR_thigh_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>9</mechanicalReduction>
+    </actuator>
+  </transmission>
+  <transmission name="tran8">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="right_back_hip_calf">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="RR_calf_motor">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <!--hardware_interface/-->
+      <mechanicalReduction>6</mechanicalReduction>
+    </actuator>
+  </transmission>
   <transmission name="tran9">
     <type>transmission_interface/SimpleTransmission</type>
     <joint name="left_back_motor_leg">
@@ -44,7 +108,7 @@
     <actuator name="RL_hip_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>9</mechanicalReduction>
     </actuator>
   </transmission>
   <transmission name="tran10">
@@ -55,7 +119,7 @@
     <actuator name="RL_thigh_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>9</mechanicalReduction>
     </actuator>
   </transmission>
   <transmission name="tran11">
@@ -66,7 +130,7 @@
     <actuator name="RL_calf_motor">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
       <!--hardware_interface/-->
-      <mechanicalReduction>1</mechanicalReduction>
+      <mechanicalReduction>6</mechanicalReduction>
     </actuator>
   </transmission>
   <gazebo reference="RL_hip">

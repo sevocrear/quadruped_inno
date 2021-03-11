@@ -16,7 +16,7 @@
   <!-- load the controllers -->
 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-	output="screen" ns="/quadruped" args="joint_state_controller FL_hip_Effort_controller FL_thigh_Effort_controller FL_calf_Effort_controller RL_hip_Effort_controller RL_thigh_Effort_controller RL_calf_Effort_controller  --timeout 50"/>
+	output="screen" ns="/quadruped" args="joint_state_controller FL_hip_Effort_controller FL_thigh_Effort_controller FL_calf_Effort_controller FR_hip_Effort_controller FR_thigh_Effort_controller FR_calf_Effort_controller RL_hip_Effort_controller RL_thigh_Effort_controller RL_calf_Effort_controller RR_hip_Effort_controller RR_thigh_Effort_controller RR_calf_Effort_controller  --timeout 50"/>
 
 <!-- FR_hip_Effort_controller FR_thigh_Effort_controller FR_calf_Effort_controller FL_hip_Effort_controller FL_thigh_Effort_controller FL_calf_Effort_controller RL_hip_Effort_controller RL_thigh_Effort_controller RL_calf_Effort_controller RR_hip_Effort_controller RR_thigh_Effort_controller RR_calf_Effort_controller -->
 	<!-- <node pkg="cheetah_control" name="mtnode" type="control_pos.py" output="screen"> 
