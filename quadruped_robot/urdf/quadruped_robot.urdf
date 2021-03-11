@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="quadruped_robot">
+  <link
+    name="body">
+    <inertial>
+      <origin
+        xyz="0.00595967385992909 0.00347011518192815 0.000128724144476447"
+        rpy="0 0 0" />
+      <mass
+        value="0.614376972447432" />
+      <inertia
+        ixx="0.00336941139420018"
+        ixy="-4.8575988980422E-08"
+        ixz="-1.3625652345197E-09"
+        iyy="0.000289319263053727"
+        iyz="-7.81791291078526E-08"
+        izz="0.00317576464583023" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/body.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.117647058823529 0.117647058823529 0.117647058823529 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="left_forward_motor">
+    <inertial>
+      <origin
+        xyz="-2.4016E-06 -0.00012687 -0.01825"
+        rpy="0 0 0" />
+      <mass
+        value="1.7721" />
+      <inertia
+        ixx="0.0011015"
+        ixy="-2.2115E-20"
+        ixz="-4.7092E-20"
+        iyy="0.0011135"
+        iyz="-7.75E-06"
+        izz="0.0018907" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_motor.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.098039 0.098039 0.098039 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_motor.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="body_left_forward_motor"
+    type="fixed">
+    <origin
+      xyz="0.065 -0.178 0"
+      rpy="1.5708 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="left_forward_motor" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_forward_leg">
+    <inertial>
+      <origin
+        xyz="-0.00291689067610592 -0.000123327968837258 -0.00111336451391641"
+        rpy="0 0 0" />
+      <mass
+        value="1.82290052220592" />
+      <inertia
+        ixx="0.00194402199468823"
+        ixy="-7.74995368724056E-06"
+        ixz="2.20326276361798E-11"
+        iyy="0.00113022776843808"
+        iyz="5.94322688269652E-11"
+        izz="0.00115440199269891" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_leg.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.937254901960784 0.137254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_leg.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_forward_motor_leg"
+    type="revolute">
+    <origin
+      xyz="0 0 0.057"
+      rpy="0 0 0" />
+    <parent
+      link="left_forward_motor" />
+    <child
+      link="left_forward_leg" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.78"
+      upper="0.78"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_forward_hip">
+    <inertial>
+      <origin
+        xyz="-0.000122004696831546 -0.0105068917015962 0.0369232159258762"
+        rpy="0 0 0" />
+      <mass
+        value="2.10147878344074" />
+      <inertia
+        ixx="0.00259433236495639"
+        ixy="-2.61244351048539E-05"
+        ixz="4.20042923319633E-06"
+        iyy="0.00129856950705609"
+        iyz="-1.2725904605891E-05"
+        izz="0.00353055972324893" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.937254901960784 0.137254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_forward_leg_hip"
+    type="revolute">
+    <origin
+      xyz="0.01425 0 0"
+      rpy="0 1.5708 0" />
+    <parent
+      link="left_forward_leg" />
+    <child
+      link="left_forward_hip" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.04"
+      upper="1.04"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_forward_calf">
+    <inertial>
+      <origin
+        xyz="1.33042839911279E-05 0.0735129471212146 1.01143462072351E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.107043571014206" />
+      <inertia
+        ixx="0.000298013511528708"
+        ixy="1.05256347900833E-07"
+        ixz="-2.21470597905919E-09"
+        iyy="2.67830262908461E-05"
+        iyz="-7.27394412198079E-08"
+        izz="0.000310178644271154" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.101960784313725 0.101960784313725 0.101960784313725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_forward_hip_calf"
+    type="revolute">
+    <origin
+      xyz="0 -0.208 0.068"
+      rpy="0 0 3.1416" />
+    <parent
+      link="left_forward_hip" />
+    <child
+      link="left_forward_calf" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_forward_foot">
+    <inertial>
+      <origin
+        xyz="2.69840204902838E-07 -0.0143807852672446 -1.27049741839858E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0424093610562834" />
+      <inertia
+        ixx="1.41888786495424E-05"
+        ixy="-2.90568059491003E-10"
+        ixz="-4.06238332327928E-11"
+        iyy="8.65121074865133E-06"
+        iyz="3.97669015260362E-09"
+        izz="1.41178031393142E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_foot.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_forward_foot.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_forward_calf_foot"
+    type="fixed">
+    <origin
+      xyz="0 0.1775 0"
+      rpy="0 0 3.1416" />
+    <parent
+      link="left_forward_calf" />
+    <child
+      link="left_forward_foot" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_back_motor">
+    <inertial>
+      <origin
+        xyz="2.4016E-06 0.00012687 -0.01825"
+        rpy="0 0 0" />
+      <mass
+        value="1.7721" />
+      <inertia
+        ixx="0.0011015"
+        ixy="-3.5575E-20"
+        ixz="-7.1348E-21"
+        iyy="0.0011135"
+        iyz="7.75E-06"
+        izz="0.0018907" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_motor.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.098039 0.098039 0.098039 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_motor.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="body_left_back_motor"
+    type="fixed">
+    <origin
+      xyz="0.065 0.178 0"
+      rpy="-1.5707963267949 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="left_back_motor" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_back_leg">
+    <inertial>
+      <origin
+        xyz="-0.0029169 0.00012334 -0.001118"
+        rpy="0 0 0" />
+      <mass
+        value="1.8229" />
+      <inertia
+        ixx="0.001944"
+        ixy="7.75E-06"
+        ixz="2.2033E-11"
+        iyy="0.0011302"
+        iyz="5.9432E-11"
+        izz="0.0011544" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_leg.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.93725 0.13725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_leg.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_back_motor_leg"
+    type="revolute">
+    <origin
+      xyz="0 0 0.057"
+      rpy="0 0 0" />
+    <parent
+      link="left_back_motor" />
+    <child
+      link="left_back_leg" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.78"
+      upper="0.78"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_back_hip">
+    <inertial>
+      <origin
+        xyz="-0.00011894 0.010505 0.036923"
+        rpy="0 0 0" />
+      <mass
+        value="2.1015" />
+      <inertia
+        ixx="0.0025944"
+        ixy="2.612E-05"
+        ixz="4.1998E-06"
+        iyy="0.0012986"
+        iyz="1.2724E-05"
+        izz="0.0035306" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_hip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.93725 0.13725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_hip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_back_leg_hip"
+    type="revolute">
+    <origin
+      xyz="0.01425 0 0"
+      rpy="0 1.5708 0" />
+    <parent
+      link="left_back_leg" />
+    <child
+      link="left_back_hip" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.04"
+      upper="1.04"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_back_calf">
+    <inertial>
+      <origin
+        xyz="0.003150209581748 0.0608714249947071 0.0130084906327194"
+        rpy="0 0 0" />
+      <mass
+        value="0.127515079557877" />
+      <inertia
+        ixx="0.000303098852949925"
+        ixy="1.05255877952204E-07"
+        ixz="-2.21457843605232E-09"
+        iyy="3.2900798128141E-05"
+        iyz="-7.2739197105815E-08"
+        izz="0.000320609420741168" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_calf.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.101960784313725 0.101960784313725 0.101960784313725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_calf.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_back_hip_calf"
+    type="revolute">
+    <origin
+      xyz="-0.003139 0.20789 0.055"
+      rpy="0 0 0" />
+    <parent
+      link="left_back_hip" />
+    <child
+      link="left_back_calf" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.57"
+      upper="1.57"
+      effort="24"
+      velocity="50" />
+  </joint>
+  <link
+    name="left_back_foot">
+    <inertial>
+      <origin
+        xyz="2.67734406894649E-07 -0.0143807830353894 -1.27018434094295E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0424093690699508" />
+      <inertia
+        ixx="1.41888803190933E-05"
+        ixy="-2.89152058115048E-10"
+        ixz="-3.96352551681418E-11"
+        iyy="8.6512128643686E-06"
+        iyz="3.97404573019817E-09"
+        izz="1.41178047876361E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_foot.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.298039215686275 0.298039215686275 0.298039215686275 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://quadruped_robot/meshes/left_back_foot.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_back_calf_foot"
+    type="fixed">
+    <origin
+      xyz="0.003139 0.17761 0.013"
+      rpy="0 0 3.1416" />
+    <parent
+      link="left_back_calf" />
+    <child
+      link="left_back_foot" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
