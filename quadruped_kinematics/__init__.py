@@ -56,7 +56,7 @@ class quadruped_kinematics():
         T_b_f = T_b_c * T_c_f
         return sym.nsimplify(T_b_f, tolerance = 1e-10, rational =True)
  
-    def lf_leg_ik(self, base, pos, sign = 1):
+    def leg_ik(self, base, pos):
         base_inv = np.zeros((4,4))
         base_inv[0:3,0:3] = base[0:3,0:3].T
         base_inv[0:3,3] = -np.dot(base[0:3,0:3].T, base[0:3,3])
@@ -78,6 +78,23 @@ class quadruped_kinematics():
 
         theta_2 = -np.pi + (np.arctan2(np.sqrt(r_square), s) + np.arctan2(self.links_size[4] + (self.links_size[5] + self.links_size[6])*np.cos(theta_3), (self.links_size[5]+self.links_size[6])*np.sin(theta_3)))
         
+        if theta_1 > np.pi:
+            theta_1 = theta_1 - 2*np.pi
+
+        if theta_2 > np.pi:
+            theta_2 = theta_2 - 2*np.pi
+
+        if theta_3 > np.pi:
+            theta_3 = theta_3 - 2*np.pi
+
+        if theta_1 < -np.pi:
+            theta_1 = theta_1 + 2*np.pi
+
+        if theta_2 < -np.pi:
+            theta_2 = theta_2 + 2*np.pi
+
+        if theta_3 < -np.pi:
+            theta_3 = theta_3 + 2*np.pi
         return theta_1, theta_2, theta_3
 
 

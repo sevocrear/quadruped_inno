@@ -149,17 +149,16 @@ theta_3 = np.linspace(-np.pi/2, np.pi/2, 50)
 for th_1 in theta_1:
   for th_2 in theta_2:
     for th_3 in theta_3:
-      poses_fk = quad_kin.lf_leg_fk(base = quad_kin.base_RB, angles = [th_1, th_2, th_3])
+      poses_fk = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = [th_1, th_2, th_3])
       # print('poses after fk',poses_fk[3])
-      angles = quad_kin.lf_leg_ik(base = quad_kin.base_RB, pos = poses_fk[3], sign = 1)
+      th_1_ik, th_2_ik, th_3_ik = quad_kin.leg_ik(base = quad_kin.base_LF, pos = poses_fk[3])
       # print('angles after ik', angles)
 
-      poses_ik = quad_kin.lf_leg_fk(base = quad_kin.base_RB, angles = angles)
-      # print("poses after ik", poses_ik[3])
+      poses_ik = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = [th_1_ik, th_2_ik, th_3_ik])
       if abs(poses_ik[3][0] - poses_fk[3][0]) >= 10e-3 or abs(poses_ik[3][1] - poses_fk[3][1]) >= 10e-3 or abs(poses_ik[3][2] - poses_fk[3][2]) >= 10e-3:
         print(":(")
         print(poses_fk[3])
-        print(angles)
+        print(th_1_ik, th_2_ik, th_3_ik)
         print(poses_ik[3])
         print(th_1, th_2, th_3)
         break
