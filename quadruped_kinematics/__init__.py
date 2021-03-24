@@ -56,26 +56,27 @@ class quadruped_kinematics():
         T_b_f = T_b_c * T_c_f
         return sym.nsimplify(T_b_f, tolerance = 1e-10, rational =True)
  
-    def lf_leg_ik(self, base, pos, sign = -1):
-        x,y,z = pos
-        x_0, y_0, z_0 = base[0:3,3]
-        x,y,z = x-x_0, y-y_0, z-z_0
+    def lf_leg_ik(self, base, pos, sign = 1):
+        base_inv = np.zeros((4,4))
+        base_inv[0:3,0:3] = base[0:3,0:3].T
+        base_inv[0:3,3] = -np.dot(base[0:3,0:3].T, base[0:3,3])
+        base_inv[3,3] = 1
+        pos = np.dot(base_inv,np.array([pos[0], pos[1], pos[2],1]).reshape(4,1))
+        x,y,z = pos[0,0], pos[1,0], pos[2,0]
+        r = np.sqrt((x)**2+ (y)**2)
+        phi = np.arctan2(y,-x)
+        alpha = np.arctan2(np.sqrt(r**2-self.links_size[3]**2), self.links_size[3])
 
-        r = np.sqrt((x)**2+ (z)**2)
-        alpha = np.arctan2(z,-x)
-        phi = np.arctan2(np.sqrt(r**2-self.links_size[3]**2), self.links_size[3])
+        theta_1 = -phi+alpha - np.pi
 
-        theta_1 = -(alpha-phi  + np.pi)
+        r_square = r**2 - self.links_size[3]**2
 
-        r_square = (x)**2 + (z)**2 - self.links_size[3]**2
-
-        s =   self.links_size[2] + (y)
+        s =   -self.links_size[2] + z
 
         D = (r_square + s**2 - self.links_size[4]**2 - (self.links_size[5]+ self.links_size[6])**2)/(2*self.links_size[4]*(self.links_size[5]+self.links_size[6]))
-        D = round(D,6)
-        theta_3 = np.arctan2(D, sign*np.sqrt(1-D**2))
+        theta_3 = np.arccos(round(D,6))
 
-        theta_2 = np.arctan2(np.sqrt(r_square), s) - np.arctan2(self.links_size[4] + (self.links_size[5] + self.links_size[6])*np.cos(theta_3), (self.links_size[5]+self.links_size[6])*np.sin(theta_3))
+        theta_2 = -np.pi + (np.arctan2(np.sqrt(r_square), s) + np.arctan2(self.links_size[4] + (self.links_size[5] + self.links_size[6])*np.cos(theta_3), (self.links_size[5]+self.links_size[6])*np.sin(theta_3)))
         
         return theta_1, theta_2, theta_3
 
