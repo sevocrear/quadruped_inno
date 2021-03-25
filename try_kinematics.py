@@ -160,7 +160,10 @@ plt.show()
 #         print(":(")
 #         print(poses_fk[3])p_m, p_h, p_c, p_f
 t = sym.symbols("t")
-x_des,x_dot_des, y_des, y_dot_des, z_des, z_dot_des = quad_kin.get_cart_trajectory_by_sym(0.1, -0.2, -0.2 +0.1*sym.sin(w*t))
+poses_0 = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = [0, 0, 0])
+x_0, y_0, z_0 = poses_0[3]
+
+x_des,x_dot_des, y_des, y_dot_des, z_des, z_dot_des = quad_kin.get_cart_trajectory_by_sym(x_0, y_0, z_0 + 0.1 + 0.1*sym.sin(w*t))
 
 poses_motor_0 = np.zeros((N,3))
 poses_hip_0 = np.zeros((N,3))
@@ -178,7 +181,8 @@ for i in range(50):
   poses_hip_0[i] = p_h
   poses_calf_0[i] = p_c
   poses_foot_0[i] = p_f
-  # cart_vel = quad_kin.get_cartesian_velocities(jac = quad_kin.LF_leg_Jac_sym(th_1_ik, th_2_ik, th_3_ik), )
+  cart_vel = quad_kin.get_cartesian_velocities(jac = quad_kin.LF_leg_Jac_sym(th_1_ik, th_2_ik, th_3_ik), angle_velocities = [x_dot_des_, y_dot_des_, z_dot_des_])
+  print(cart_vel)
 
 
 
