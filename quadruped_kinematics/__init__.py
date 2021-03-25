@@ -78,7 +78,7 @@ class quadruped_kinematics():
 
     def get_cartesian_velocities(self, jac, angle_velocities):
         cart_vel = np.dot(jac, np.array(angle_velocities).reshape(3,1))
-        return cart_vel
+        return [cart_vel[0,0], cart_vel[1,0], cart_vel[2,0]]
 
     def leg_ik(self, base, pos):
         '''
