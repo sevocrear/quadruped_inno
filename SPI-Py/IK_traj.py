@@ -73,7 +73,8 @@ def main():
 
         w = 3
         t = sym.symbols("t")
-        poses_0 = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']])
+        q_cur = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']]
+        poses_0 = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = list(map(lambda x: -x,q_cur)))# "-" is because the z-axis is inverted for each motor
         x_0, y_0, z_0 = poses_0[3]
         print(x_0, y_0, z_0)
         x_des,x_dot_des, y_des, y_dot_des, z_des, z_dot_des = quad_kin.get_cart_trajectory_by_sym(x_0, y_0, z_0 + 0.1 + 0.1*sym.sin(w*t))
@@ -93,7 +94,7 @@ def main():
                 q_des = quad_kin.leg_ik(base = quad_kin.base_LF, pos = pos_des)
                
 
-                q_dot_des = - np.dot(quad_kin.LF_leg_Jac_sym(q_des), np.array([[vel_des[0]],
+                q_dot_des = - np.dot(np.linalg.inv(quad_kin.LF_leg_Jac_sym(q_des)), np.array([[vel_des[0]],
                                                                              [vel_des[1]],
                                                                              [vel_des[2]]]))  # "-" is because the z-axis is inverted for each motor
                 q_des = - np.array([[q_des[0]],
@@ -110,22 +111,10 @@ def main():
                 
                 i = 0
                 for motor in motors:
-                    motor.set_torque(u[i,0])
+                    motor.set_torque(u[i])
                     i+=1
 
                 spine.transfer_and_receive()
-
-                # if time.time() - start_time > 20:
-                #     spine.data_out_0[56] = 0xAE
-                # time.sleep(40e-3)
-                # for motor in motors:
-                #     print(motor.state["pos"], end = '\t')
-                # print("\n")
-
-                # time.sleep(10e-3)
-
-            #     # print(end - start)
-                # print(motor_1.state)
         for motor in motors:
             motor.disable()
         spine.transfer_and_receive()
