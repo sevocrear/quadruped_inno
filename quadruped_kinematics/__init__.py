@@ -8,10 +8,13 @@ class quadruped_kinematics():
         self.links_size = links_size
         self.transforms = self.transforms()
         self.base_LF = np.linalg.multi_dot([self.transforms.Ty(-self.links_size[0]), self.transforms.Tx(self.links_size[1]), self.transforms.Rx(np.pi/2)])
-        self.LF_leg_Jac_sym = self.lf_get_Jac_sym(base = self.base_LF)
+        self.LF_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_LF)
         self.base_LB = np.linalg.multi_dot([self.transforms.Ty(self.links_size[0]), self.transforms.Tx(self.links_size[1]), self.transforms.Rx(-np.pi/2)])
+        self.LB_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_LB)
         self.base_RF = np.linalg.multi_dot([self.transforms.Ty(-self.links_size[0]), self.transforms.Tx(-self.links_size[1]), self.transforms.Rz(np.pi), self.transforms.Rx(-np.pi/2)])
+        self.RF_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_RF)
         self.base_RB = np.linalg.multi_dot([self.transforms.Ty(self.links_size[0]), self.transforms.Tx(-self.links_size[1]), self.transforms.Rz(np.pi), self.transforms.Rx(np.pi/2)])
+        self.RB_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_RB)
 
         self.base_LF_sym = self.transforms.Ty_sym(-self.links_size[0])*self.transforms.Tx_sym(self.links_size[1])*self.transforms.Rx_sym(np.pi/2)
 
@@ -29,6 +32,24 @@ class quadruped_kinematics():
         p_f = T_b_f[0:3,3]
         return p_m, p_h, p_c, p_f
 
+
+    def lf_get_Jac_sym(self, base):
+        T_b_h = base * self.transforms.Rz_sym('alpha')*self.transforms.Tz_sym(self.links_size[2])*self.transforms.Tx_sym(self.links_size[3])*self.transforms.Ry_sym(np.pi/2) # transform brom base to hip
+        p_h = T_b_h[0:3,3]
+        T_h_c = self.transforms.Rz_sym('beta')* self.transforms.Ty_sym(-self.links_size[4])   # transform from hip to calf
+        T_c_f = self.transforms.Rz_sym(np.pi)* self.transforms.Rz_sym('gamma') * self.transforms.Ty_sym(self.links_size[5] + self.links_size[6]) # transform from calf to foot
+        T_b_c = T_b_h * T_h_c
+
+        T_b_f = T_b_c * T_c_f
+        
+        T_pos = T_b_f[0:3,3]
+        alpha, beta, gamma = sym.symbols("alpha"), sym.symbols("beta"), sym.symbols("gamma")
+        q_matrix = sym.Matrix([alpha, beta, gamma])
+        Jac = T_pos.jacobian(q_matrix)
+        Jac = sym.simplify(sym.nsimplify(Jac, tolerance = 1e-10, rational =True))
+        Jac = sym.lambdify([alpha, beta, gamma], Jac, "numpy")
+        return Jac
+
     def lb_leg_fk(self, angles, base):
         p_m = base[0:3,3]
         T_b_h = np.linalg.multi_dot([base,self.transforms.Rz(angles[0]), self.transforms.Tz(self.links_size[2]), self.transforms.Tx(self.links_size[3]), self.transforms.Ry(np.pi/2)]) # transform brom base to hip
@@ -44,13 +65,11 @@ class quadruped_kinematics():
         return p_m, p_h, p_c, p_f
 
 
-    
-
-    def lf_get_Jac_sym(self, base):
+    def lb_get_Jac_sym(self, base):
         T_b_h = base * self.transforms.Rz_sym('alpha')*self.transforms.Tz_sym(self.links_size[2])*self.transforms.Tx_sym(self.links_size[3])*self.transforms.Ry_sym(np.pi/2) # transform brom base to hip
         p_h = T_b_h[0:3,3]
-        T_h_c = self.transforms.Rz_sym('beta')* self.transforms.Ty_sym(-self.links_size[4])   # transform from hip to calf
-        T_c_f = self.transforms.Rz_sym(np.pi)* self.transforms.Rz_sym('gamma') * self.transforms.Ty_sym(self.links_size[5] + self.links_size[6]) # transform from calf to foot
+        T_h_c = self.transforms.Rz_sym('beta')* self.transforms.Ty_sym(self.links_size[4])   # transform from hip to calf
+        T_c_f = self.transforms.Rz_sym('gamma') * self.transforms.Ty_sym(self.links_size[5] + self.links_size[6]) # transform from calf to foot
         T_b_c = T_b_h * T_h_c
 
         T_b_f = T_b_c * T_c_f
@@ -80,7 +99,7 @@ class quadruped_kinematics():
         cart_vel = np.dot(jac, np.array(angle_velocities).reshape(3,1))
         return [cart_vel[0,0], cart_vel[1,0], cart_vel[2,0]]
 
-    def leg_ik(self, base, pos):
+    def leg_ik(self, base, pos, flag = 0):
         '''
         method for solving inverse kinematics of each quadruped leg
         '''
@@ -94,8 +113,10 @@ class quadruped_kinematics():
         phi = np.arctan2(y,-x)
         alpha = np.arctan2(np.sqrt(r**2-self.links_size[3]**2), self.links_size[3])
 
-        theta_1 = -phi+alpha - np.pi
-
+        if flag:
+            theta_1 = +phi+alpha - np.pi
+        else:
+            theta_1 = -phi+alpha - np.pi
         r_square = r**2 - self.links_size[3]**2
 
         s =   -self.links_size[2] + z
