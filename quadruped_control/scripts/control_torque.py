@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # license removed for brevity
 import rospy
-from chee_control import cheetah_control
+from cheetah_control import cheetah_control
 import numpy as np
 import sys, os
 import time
 import sympy as sym
+os.chdir(os.path.dirname(__file__))
 sys.path.append("../..")
 from quadruped_kinematics import quadruped_kinematics
 
