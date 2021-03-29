@@ -5,6 +5,7 @@ import time
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
 from gazebo_msgs.msg import LinkStates
+import copy
 class cheetah_control():
     def __init__(self, type_of_control = 'position', time_pause_before_control = 0, rate_value = 1000):
         rospy.init_node('cheetah_control', anonymous=True)
@@ -28,14 +29,13 @@ class cheetah_control():
                      'RR_thigh' : ['right_back_leg_hip'], 
                        'RR_calf': ['right_back_hip_calf']
                     }
-
+        self.joints_to_corresp = copy.deepcopy(self.joints)
         if type_of_control == 'position':
             self.controllers = list(map(lambda x: x + '_position_controller', self.joints))
         elif type_of_control == 'torque':
             self.controllers = list(map(lambda x: x + '_Effort_controller', self.joints))
         self.pub = {}
         i = 0
-        
         for joint in self.joints:
             self.joints[joint].append(self.controllers[i])
             self.pub[joint]=rospy.Publisher(self.joint_name(self.joints[joint][1]), Float64, queue_size=10)
@@ -54,6 +54,8 @@ class cheetah_control():
         self.body_twist_linear = {}
 
     def move_joint(self,joint, pos):
+
+        joint = list(self.joints_to_corresp.keys())[list(self.joints_to_corresp.values()).index([joint])]
         self.pub[joint].publish(pos)	
 
     def joint_name(self, joint):

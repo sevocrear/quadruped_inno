@@ -2,6 +2,7 @@
 <launch>
 
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+	<arg name="paused" value="true"/>
 	</include>
 
 	<param name="robot_description" command="xacro --inorder '$(find quadruped_robot)/urdf/quadruped_control.urdf'"/>

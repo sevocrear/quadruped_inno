@@ -9,6 +9,15 @@
 <xacro:include filename="$(find quadruped_robot)/urdf/left_leg.urdf"/>
 <xacro:include filename="$(find quadruped_robot)/urdf/right_leg.urdf"/>
 
+
+    <!-- Used for fixing robot to Gazebo 'base_link' -->
+  <link name="world"/>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="body"/>
+  </joint>
+
   <link
     name="body">
     <inertial>
