@@ -13,9 +13,10 @@
     <!-- Used for fixing robot to Gazebo 'base_link' -->
   <link name="world"/>
 
-  <joint name="fixed" type="fixed">
+  <joint name="world_body" type="floating">
     <parent link="world"/>
     <child link="body"/>
+    <origin rpy="0 0 0" xyz="0 0 0.40"/>
   </joint>
 
   <link

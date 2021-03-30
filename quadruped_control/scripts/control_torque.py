@@ -90,7 +90,7 @@ if __name__ == '__main__':
 		# 			  [0],
 		# 			  [0]], dtype = np.float)
 
-		q_goal = - np.array([[q_des[0]],
+		q_goal = np.array([[q_des[0]],
 							[q_des[1]],
 							[q_des[2]]]) # "-" is because the z-axis is inverted for each motor
 
@@ -104,7 +104,7 @@ if __name__ == '__main__':
 			if not cheetah_control_pos.joints_positions:
 				continue
 			t = time.time() - start_time
-
+			
 			traj_track(t, 'LF_leg', LF_leg, traj_des_LF, Kd, Kp)
 			traj_track(t, 'LB_leg', LB_leg, traj_des_LB, Kd, Kp)
 			traj_track(t, 'RB_leg', RB_leg, traj_des_RB, Kd, Kp)

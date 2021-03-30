@@ -8,9 +8,14 @@
 	<param name="robot_description" command="xacro --inorder '$(find quadruped_robot)/urdf/quadruped_control.urdf'"/>
 <!---->	
 	<node name="spawn_robot" pkg="gazebo_ros" type="spawn_model" 
-		args="-urdf -model quadruped_robot -param robot_description -z 0.5">
+		args="-urdf -model quadruped_robot -param robot_description">
 	</node>
- 
+	
+   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+    </node>
    <rosparam file="$(find quadruped_control)/launch/controller/quadruped_control_torque.yaml" command="load"/>
 
 
@@ -20,7 +25,11 @@
 	output="screen" ns="/quadruped" args="joint_state_controller FL_hip_Effort_controller FL_thigh_Effort_controller FL_calf_Effort_controller FR_hip_Effort_controller FR_thigh_Effort_controller FR_calf_Effort_controller RL_hip_Effort_controller RL_thigh_Effort_controller RL_calf_Effort_controller RR_hip_Effort_controller RR_thigh_Effort_controller RR_calf_Effort_controller  --timeout 50"/>
 
 <!-- FR_hip_Effort_controller FR_thigh_Effort_controller FR_calf_Effort_controller FL_hip_Effort_controller FL_thigh_Effort_controller FL_calf_Effort_controller RL_hip_Effort_controller RL_thigh_Effort_controller RL_calf_Effort_controller RR_hip_Effort_controller RR_thigh_Effort_controller RR_calf_Effort_controller -->
-	<!-- <node pkg="cheetah_control" name="mtnode" type="control_pos.py" output="screen"> 
-	</node> -->
+	
+	<node pkg="reconfigure" name="dynamic_reconfigure" type="server.py" output="screen"> 
+	</node>
 					
+	<node name="rqt_gui" pkg="rqt_gui" type="rqt_gui" 
+		args="-s reconfigure">
+	</node>
 </launch>

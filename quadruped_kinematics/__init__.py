@@ -8,15 +8,15 @@ class quadruped_kinematics():
         self.links_size = links_size
         self.transforms = self.transforms()
         self.base_LF = np.linalg.multi_dot([self.transforms.Ty(-self.links_size[0]), self.transforms.Tx(self.links_size[1]), self.transforms.Rx(np.pi/2)])
-        self.LF_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_LF)
+        # self.LF_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_LF)
         self.base_LB = np.linalg.multi_dot([self.transforms.Ty(self.links_size[0]), self.transforms.Tx(self.links_size[1]), self.transforms.Rx(-np.pi/2)])
-        self.LB_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_LB)
+        # self.LB_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_LB)
         self.base_RF = np.linalg.multi_dot([self.transforms.Ty(-self.links_size[0]), self.transforms.Tx(-self.links_size[1]), self.transforms.Rz(np.pi), self.transforms.Rx(-np.pi/2)])
-        self.RF_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_RF)
+        # self.RF_LEG_JAC_LAMBD = self.lb_get_Jac_sym(base = self.base_RF)
         self.base_RB = np.linalg.multi_dot([self.transforms.Ty(self.links_size[0]), self.transforms.Tx(-self.links_size[1]), self.transforms.Rz(np.pi), self.transforms.Rx(np.pi/2)])
-        self.RB_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_RB)
+        # self.RB_LEG_JAC_LAMBD = self.lf_get_Jac_sym(base = self.base_RB)
 
-        self.base_LF_sym = self.transforms.Ty_sym(-self.links_size[0])*self.transforms.Tx_sym(self.links_size[1])*self.transforms.Rx_sym(np.pi/2)
+        # self.base_LF_sym = self.transforms.Ty_sym(-self.links_size[0])*self.transforms.Tx_sym(self.links_size[1])*self.transforms.Rx_sym(np.pi/2)
 
     def lf_leg_fk(self, angles, base):
         p_m = base[0:3,3]
@@ -99,7 +99,7 @@ class quadruped_kinematics():
         cart_vel = np.dot(jac, np.array(angle_velocities).reshape(3,1))
         return [cart_vel[0,0], cart_vel[1,0], cart_vel[2,0]]
 
-    def leg_ik(self, base, pos, flag = 0):
+    def leg_ik(self, base, pos, flag = 0, flag_inv = 0):
         '''
         method for solving inverse kinematics of each quadruped leg
         '''
@@ -123,7 +123,11 @@ class quadruped_kinematics():
 
         D = (r_square + s**2 - self.links_size[4]**2 - (self.links_size[5]+ self.links_size[6])**2)/(2*self.links_size[4]*(self.links_size[5]+self.links_size[6]))
         
-        theta_3 = np.arccos(round(D,6))
+        if flag_inv:
+            theta_3 = -np.arccos(round(D,6))
+        else:
+            theta_3 = np.arccos(round(D,6))
+
 
         theta_2 = -np.pi + (np.arctan2(np.sqrt(r_square), s) + np.arctan2(self.links_size[4] + (self.links_size[5] + self.links_size[6])*np.cos(theta_3), (self.links_size[5]+self.links_size[6])*np.sin(theta_3)))
         
