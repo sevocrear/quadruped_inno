@@ -74,7 +74,7 @@ if __name__ == '__main__':
             #     t, 'RF_leg', cheetah_control_pos.RF_leg, traj_des_RF, Kd, Kp, quad_kin)
             U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
                 quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp)
-            print(U)
+            # print(U)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             cheetah_control_pos.rate.sleep()
 

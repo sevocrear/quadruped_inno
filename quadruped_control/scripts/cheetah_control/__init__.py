@@ -274,8 +274,9 @@ class cheetah_control():
             self.move_joint(motors_names[0], U[0])
             self.move_joint(motors_names[1], U[1])
             self.move_joint(motors_names[2], U[2])
-            return [U[0], U[1], U[2]], 1
-        return None, 0
+            return [U[0][0], U[1][0], U[2][0]], 1
+        else:
+            return None, 0
 
     def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp):
         x_des, y_des, z_des, roll, pitch, yaw = 0,0, 0.4, 0,0,0
@@ -341,5 +342,6 @@ class cheetah_control():
             if flag:
                 U_sum['RB'] = U
             return U_sum, 1
-        return None, 0
+        else:
+            return None, 0
             

@@ -116,8 +116,8 @@
     <limit
       lower="-0.78"
       upper="0.78"
-      effort="24"
-      velocity="50" />
+      effort="18"
+      velocity="4" />
   </joint>
   </xacro:macro>
 
@@ -179,8 +179,8 @@
     <limit
       lower="-1.04"
       upper="1.04"
-      effort="24"
-      velocity="50" />
+      effort="18"
+      velocity="4" />
   </joint>
   </xacro:macro>
 
@@ -242,8 +242,8 @@
     <limit
       lower="-1.57"
       upper="1.57"
-      effort="24"
-      velocity="50" />
+      effort="12"
+      velocity="6" />
   </joint>
   <link
     name="${link_prefix}_foot">
