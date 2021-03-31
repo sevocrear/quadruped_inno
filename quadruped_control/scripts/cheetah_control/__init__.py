@@ -227,12 +227,12 @@ class cheetah_control():
                 q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.LB_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
                                                                                                             [vel_des[2]]]))
             elif leg_name == "RB_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des)
+                q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv = 1)
 
                 q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.RB_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
                                                                                                             [vel_des[2]]]))
             elif leg_name == "RF_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1)
+                q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1, flag_inv = 1)
 
                 q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.RF_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
                                                                                                             [vel_des[2]]]))		
@@ -286,7 +286,7 @@ class cheetah_control():
 
             q_dot_goal = 0
         elif leg_name == "RB_leg":
-            q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv= 0)
+            q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv= 1)
             # print(pos_des)
             print(q_des)
             q_dot_goal = 0
@@ -297,7 +297,7 @@ class cheetah_control():
         else: print('wrong input to traj')
         
 
-        q_goal =  -np.array([[q_des[0]],
+        q_goal =  np.array([[q_des[0]],
                             [q_des[1]],
                             [q_des[2]]]) # "-" is because the z-axis is inverted for each motor
 
@@ -330,7 +330,7 @@ class cheetah_control():
             else:
                 return None, 0
         else: # take from input
-            x_body_des, y_body_des, z_body_des, roll, pitch, yaw = 0, 0, 0.35, 0, 0, 0
+            x_des, y_des, z_des, roll, pitch, yaw = 0, 0, 0.22, 0, 0, 0
         R =  np.linalg.multi_dot([quad_kin.transforms.Rz(yaw), quad_kin.transforms.Ry(pitch), quad_kin.transforms.Rx(roll)])[0:3,0:3]
         d = np.array([[x_des],
                         [y_des],
