@@ -73,24 +73,16 @@ def main():
 
         w = 3
         t = sym.symbols("t")
-<<<<<<< HEAD
         q_cur = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']]
         poses_0 = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = list(map(lambda x: -x, q_cur))) # "-" is because the z-axis is inverted for each motor
         x_0, y_0, z_0 = poses_0[3]
         print(x_0, y_0, z_0)
         x_des,x_dot_des, y_des, y_dot_des, z_des, z_dot_des = quad_kin.get_cart_trajectory_by_sym(x_0, y_0, z_0 + 0.1 + 0.1*sym.sin(w*t))
-=======
-        poses_0 = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']])
-        x_0, y_0, z_0 = poses_0[3]
-        print(x_0, y_0, z_0)
-        x_des,x_dot_des, y_des, y_dot_des, z_des, z_dot_des = quad_kin.get_cart_trajectory_by_sym(x_0, y_0, z_0 + z_0/2)
->>>>>>> e40ef3be0db87a9b8f07faac5090e4b7a197100b
 
 
         if user_input == 'Y' or user_input == 'y':
             while 1:
                 t = time.time() - start_time
-<<<<<<< HEAD
                 q_cur = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']]
                 q_dot_cur = [motors[0].state['vel'], motors[1].state['vel'], motors[2].state['vel']]
                 # for motor in motors:
@@ -115,49 +107,15 @@ def main():
                                 [q_dot_cur[1]],
                                 [q_dot_cur[2]]])
                 u = np.dot(Kp, q_des - q_cur) + np.dot(Kd, q_dot_des - q_dot_cur)
-=======
-                q_pos = [motors[0].state['pos'], motors[1].state['pos'], motors[2].state['pos']]
-                q_vel = [motors[0].state['vel'], motors[1].state['vel'], motors[2].state['vel']]
-                # for motor in motors:
-
-                x_des_,x_dot_des_, y_des_, y_dot_des_, z_des_, z_dot_des_ = x_des(t),x_dot_des(t), y_des(t), y_dot_des(t), z_des(t), z_dot_des(t)
-
-                print(x_des_, y_des_, z_des_)
-                th_1_ik, th_2_ik, th_3_ik = quad_kin.leg_ik(base = quad_kin.base_LF, pos = [x_des_, y_des_, z_des_])
-                # print(q_pos)
-                _, _, _, pos = quad_kin.lf_leg_fk(base = quad_kin.base_LF, angles = q_pos)
-                
-                vel = quad_kin.get_cartesian_velocities(jac = quad_kin.LF_leg_Jac_sym(q_pos[0], q_pos[1], q_pos[2]), angle_velocities = q_vel)
-
-                u = np.linalg.multi_dot([np.transpose(quad_kin.LF_leg_Jac_sym(q_pos[0], q_pos[1], q_pos[2])),Kp,np.array([x_des_-pos[0], y_des_ - pos[1], z_des_ - pos[2]]).reshape(3,1)]) + np.linalg.multi_dot([np.transpose(quad_kin.LF_leg_Jac_sym(q_pos[0], q_pos[1], q_pos[2])),Kd,np.array([x_dot_des_-vel[0], y_dot_des_-vel[1], z_dot_des_-vel[2]]).reshape(3,1)])
->>>>>>> e40ef3be0db87a9b8f07faac5090e4b7a197100b
                 
                 
                 i = 0
                 for motor in motors:
-<<<<<<< HEAD
                     motor.set_torque(u[i])
-=======
-                    motor.set_torque(u[i,0])
->>>>>>> e40ef3be0db87a9b8f07faac5090e4b7a197100b
                     i+=1
 
                 spine.transfer_and_receive()
 
-<<<<<<< HEAD
-=======
-                # if time.time() - start_time > 20:
-                #     spine.data_out_0[56] = 0xAE
-                # time.sleep(40e-3)
-                # for motor in motors:
-                #     print(motor.state["pos"], end = '\t')
-                # print("\n")
-
-                # time.sleep(10e-3)
-
-            #     # print(end - start)
-                # print(motor_1.state)
->>>>>>> e40ef3be0db87a9b8f07faac5090e4b7a197100b
         for motor in motors:
             motor.disable()
         spine.transfer_and_receive()

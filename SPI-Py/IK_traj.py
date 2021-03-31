@@ -50,7 +50,7 @@ def main():
     for motor in motors:
         motor.set_torque_limit(10)
         
-    kp, kd = 50, 2.5
+    kp, kd = 25, 0.5
     Kp = np.eye(3,3)*kp
     Kd = np.eye(3,3)*kd
 
@@ -94,7 +94,8 @@ def main():
                 q_des = quad_kin.leg_ik(base = quad_kin.base_LF, pos = pos_des)
                
 
-                q_dot_des = - np.dot(np.linalg.inv(quad_kin.LF_leg_Jac_sym(q_des)), np.array([[vel_des[0]],
+
+                q_dot_des = - np.dot(np.linalg.inv(quad_kin.LF_leg_Jac_sym(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],
                                                                              [vel_des[1]],
                                                                              [vel_des[2]]]))  # "-" is because the z-axis is inverted for each motor
                 q_des = - np.array([[q_des[0]],
@@ -110,6 +111,7 @@ def main():
                 
                 
                 i = 0
+                # print(u)
                 for motor in motors:
                     motor.set_torque(u[i])
                     i+=1

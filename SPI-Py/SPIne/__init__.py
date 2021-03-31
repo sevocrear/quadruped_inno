@@ -49,7 +49,7 @@ class SPIne():
 
 
 
-        self.motors = motors
+        self.motors = motors['LF_leg'] + motors['RF_leg'] + motors['LB_leg'] + motors['RB_leg']
         self.motors_IDs = list(map(lambda x: [x.CAN_ID, x.motor_id], self.motors))
 
         self.spi_box_placing_0 = [[[0,2],[1,10]],
