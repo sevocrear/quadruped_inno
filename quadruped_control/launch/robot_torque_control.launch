@@ -28,6 +28,9 @@
 	
 	<node pkg="reconfigure" name="dynamic_reconfigure" type="server.py" output="screen"> 
 	</node>
+
+	<node pkg="quadruped_control" name="control_RPY_POS_of_COM" type="control_body_P_RPY.py" output="screen"> 
+	</node>
 					
 	<node name="rqt_gui" pkg="rqt_gui" type="rqt_gui" 
 		args="-s reconfigure">

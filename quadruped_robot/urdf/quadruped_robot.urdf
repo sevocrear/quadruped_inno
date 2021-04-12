@@ -11,13 +11,13 @@
 
 
     <!-- Used for fixing robot to Gazebo 'base_link' -->
-  <link name="world"/>
+  <!-- <link name="world"/>
 
   <joint name="world_body" type="fixed">
     <parent link="world"/>
     <child link="body"/>
     <origin rpy="0 0 0" xyz="0 0 0.5"/>
-  </joint>
+  </joint> -->
 
   <link
     name="body">

@@ -92,33 +92,30 @@ if __name__ == '__main__':
     #     spine.transfer_and_receive()
     #     # time.sleep(0.1)
     # try:
-    print(f'You are going to turn on motors, press "Y" to continue...\n')
-    user_input = input()
-    if user_input == 'Y' or user_input == 'y':
-        while not rospy.is_shutdown():
-            try:
-                if not cheetah_control_pos.joints_positions:
-                    continue
-                t = time.time() - start_time
-                Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
+    while not rospy.is_shutdown():
+        try:
+            if not cheetah_control_pos.joints_positions:
+                continue
+            t = time.time() - start_time
+            Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
 
-                U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
-                    quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= {})
-                # print(U['RB_leg'])
-                cheetah_control_pos.go_to_zero_all(Kp, Kd)
-                cheetah_control_pos.rate.sleep()
-                # for motor in motors:
-                #     if motor == 'RB_leg':
-                #         motors[motor][0].set_torque(U[motor][0])
-                #         motors[motor][1].set_torque(U[motor][1])
-                #         motors[motor][2].set_torque(U[motor][2])
-                #     else:
-                #         motors[motor][0].set_torque(0)
-                #         motors[motor][1].set_torque(0)
-                #         motors[motor][2].set_torque(0)
-                # spine.transfer_and_receive()
-            except rospy.ROSInterruptException:
-                pass
+            U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= {})
+            # print(U['RB_leg'])
+            cheetah_control_pos.go_to_zero_all(Kp, Kd)
+            cheetah_control_pos.rate.sleep()
+            # for motor in motors:
+            #     if motor == 'RB_leg':
+            #         motors[motor][0].set_torque(U[motor][0])
+            #         motors[motor][1].set_torque(U[motor][1])
+            #         motors[motor][2].set_torque(U[motor][2])
+            #     else:
+            #         motors[motor][0].set_torque(0)
+            #         motors[motor][1].set_torque(0)
+            #         motors[motor][2].set_torque(0)
+            # spine.transfer_and_receive()
+        except rospy.ROSInterruptException:
+            pass
     #         for motor in motors:
     #             motors[motor][0].disable()
     #             motors[motor][1].disable()

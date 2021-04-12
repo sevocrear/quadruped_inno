@@ -119,6 +119,7 @@
       upper="0.78"
       effort="18"
       velocity="4" />
+    <dynamics damping="0.7"/>
   </joint>
   </xacro:macro>
 
@@ -181,6 +182,7 @@
       upper="1.04"
       effort="18"
       velocity="4" />
+    <dynamics damping="0.7"/>
   </joint>
   </xacro:macro>
 
@@ -244,6 +246,7 @@
       upper="1.57"
       effort="12"
       velocity="6" />
+    <dynamics damping="0.7"/>
   </joint>
   <link
     name="${link_prefix}_foot">
