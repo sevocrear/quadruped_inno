@@ -287,8 +287,6 @@ class cheetah_control():
             q_dot_goal = 0
         elif leg_name == "RB_leg":
             q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv= 1)
-            # print(pos_des)
-            print(q_des)
             q_dot_goal = 0
         elif leg_name == "RF_leg":
             q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1, flag_inv = 1)
@@ -302,7 +300,7 @@ class cheetah_control():
                             [q_des[2]]]) # "-" is because the z-axis is inverted for each motor
 
         U = np.dot(Kp,q_goal - q_cur) + np.dot(Kd,q_dot_goal - q_dot_cur)
-
+        
         if self.use_ros:
             self.move_joint(motors_names[0], U[0])
             self.move_joint(motors_names[1], U[1])

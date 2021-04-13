@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
             U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
                 quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= {})
-            # print(U['RB_leg'])
+            print(U)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             cheetah_control_pos.rate.sleep()
             # for motor in motors:
