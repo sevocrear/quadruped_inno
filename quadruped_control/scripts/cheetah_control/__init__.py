@@ -283,10 +283,11 @@ class cheetah_control():
             q_dot_goal = 0
         elif leg_name == "LB_leg":
             q_des = quad_kin.leg_ik(base = quad_kin.base_LB, pos = pos_des, flag = 1)
-
+            
             q_dot_goal = 0
         elif leg_name == "RB_leg":
             q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv= 1)
+            
             q_dot_goal = 0
         elif leg_name == "RF_leg":
             q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1, flag_inv = 1)
@@ -308,7 +309,7 @@ class cheetah_control():
         return [U[0][0], U[1][0], U[2][0]], 1
         
 
-    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}):
+    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3]):
         x_des, y_des, z_des, roll, pitch, yaw = 0,0, 0., 0,0,0
         if self.use_ros:
             if not self.check_zero_flag():
@@ -325,10 +326,9 @@ class cheetah_control():
                         pitch = self.config.doubles[i].value
                     elif self.config.doubles[i].name == 'Y_des':
                         yaw = self.config.doubles[i].value
-            else:
-                return None, 0
-        else: # take from input
-            x_des, y_des, z_des, roll, pitch, yaw = 0, 0, 0.22, 0, 0, 0
+        else:
+            x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
+
         R =  np.linalg.multi_dot([quad_kin.transforms.Rz(yaw), quad_kin.transforms.Ry(pitch), quad_kin.transforms.Rx(roll)])[0:3,0:3]
         d = np.array([[x_des],
                         [y_des],

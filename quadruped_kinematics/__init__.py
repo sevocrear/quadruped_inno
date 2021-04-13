@@ -150,7 +150,7 @@ class quadruped_kinematics():
 
             if theta_3 < -np.pi:
                 theta_3 = theta_3 + 2*np.pi
-            return theta_1, theta_2, theta_3
+            return [theta_1, theta_2, theta_3]
         except RuntimeWarning:
             print('inapropriate pos! Not possible. Going to the zero pos')
             return [0,0,0]
