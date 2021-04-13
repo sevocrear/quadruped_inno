@@ -273,6 +273,9 @@ class cheetah_control():
             for idx, motor in enumerate(tmotors[leg_name]):
                 q_cur[idx] = motor.state['pos']
                 q_dot_cur[idx] = motor.state['vel']
+                if idx == 2:
+                    q_cur[idx] = motor.state['pos']/1.5
+                    q_dot_cur[idx] = motor.state['vel']/1.5
         x_des_,x_dot_des_, y_des_, y_dot_des_, z_des_, z_dot_des_ = pos_des[0], 0, pos_des[1], 0, pos_des[2], 0
 
         pos_des = [x_des_, y_des_, z_des_]

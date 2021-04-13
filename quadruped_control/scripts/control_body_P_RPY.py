@@ -70,9 +70,9 @@ if __name__ == '__main__':
         tmotors = motors
         spine = SPIne(motors=motors)
         for motor in motors:
-            motors[motor][0].set_torque_limit(0.5)
-            motors[motor][1].set_torque_limit(0.5)
-            motors[motor][2].set_torque_limit(0.5)
+            motors[motor][0].set_torque_limit(5)
+            motors[motor][1].set_torque_limit(5)
+            motors[motor][2].set_torque_limit(5)
         try:
             for motor in motors:
                 motors[motor][0].set_zero()
@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
             if not use_ros:
                 for motor in motors:
-                    if motor == 'LB_leg':
+                    if motor == 'LF_leg':
                         motors[motor][0].set_torque(U[motor][0])
                         motors[motor][1].set_torque(U[motor][1])
                         motors[motor][2].set_torque(U[motor][2])
@@ -118,9 +118,9 @@ if __name__ == '__main__':
                         # motors[motor][0].set_torque(0)
                         # motors[motor][1].set_torque(0)
                         # motors[motor][2].set_torque(0)
-                        print(motors[motor][0].state['pos'])
-                        print(motors[motor][1].state['pos'])
-                        print(motors[motor][2].state['pos'])
+                        # print(motors[motor][0].state['pos'])
+                        # print(motors[motor][1].state['pos'])
+                        print(motors[motor][2].state['pos']/1.5)
                     else:
                         motors[motor][0].set_torque(0)
                         motors[motor][1].set_torque(0)
