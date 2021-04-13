@@ -70,9 +70,9 @@ if __name__ == '__main__':
         tmotors = motors
         spine = SPIne(motors=motors)
         for motor in motors:
-            motors[motor][0].set_torque_limit(5)
-            motors[motor][1].set_torque_limit(5)
-            motors[motor][2].set_torque_limit(5)
+            motors[motor][0].set_torque_limit(20)
+            motors[motor][1].set_torque_limit(20)
+            motors[motor][2].set_torque_limit(20)
         try:
             for motor in motors:
                 motors[motor][0].set_zero()
@@ -103,14 +103,14 @@ if __name__ == '__main__':
             Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
 
             U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= motors, xyz = [0,0,0.3 + 0.1*np.sin(6*t)])
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= motors, xyz = [0,0,0.35 + 0.05*np.cos(6*t)])
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if use_ros:
                 cheetah_control_pos.rate.sleep()
 
             if not use_ros:
                 for motor in motors:
-                    if motor == 'LF_leg':
+                    if True:
                         motors[motor][0].set_torque(U[motor][0])
                         motors[motor][1].set_torque(U[motor][1])
                         motors[motor][2].set_torque(U[motor][2])
