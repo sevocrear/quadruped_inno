@@ -23,12 +23,12 @@ if __name__ == '__main__':
     cheetah_control_pos = cheetah_control(
         type_of_control='torque', use_ros= use_ros)
 
-    Kp = np.array([[10, 0, 0],
-                   [0, 10, 0],
-                   [0, 0, 5]])
+    Kp = np.array([[30, 0, 0],
+                   [0, 30, 0],
+                   [0, 0, 30]])
     Kd = np.array([[1, 0, 0],
                    [0, 1, 0],
-                   [0, 0, 0.5]])
+                   [0, 0, 1]])
 
 
     links_sizes_mm = [162.75, 65, 72.25, 82.25, 208, 159, 58.5]
@@ -80,6 +80,7 @@ if __name__ == '__main__':
                 motors[motor][2].set_zero()
             # time.sleep(0.1)
             spine.transfer_and_receive()
+            print(1)
 
             for motor in motors:
                 motors[motor][0].enable()
@@ -103,14 +104,14 @@ if __name__ == '__main__':
             Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
 
             U, flag = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= motors, xyz = [0,0,0.35 + 0.05*np.cos(6*t)])
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors= motors, xyz = [0,0,0.375 + 0.05*np.cos(2*t)])
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if use_ros:
                 cheetah_control_pos.rate.sleep()
 
             if not use_ros:
                 for motor in motors:
-                    if True:
+                    if motor in ['LB_leg']:
                         motors[motor][0].set_torque(U[motor][0])
                         motors[motor][1].set_torque(U[motor][1])
                         motors[motor][2].set_torque(U[motor][2])

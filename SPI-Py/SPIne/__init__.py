@@ -1,5 +1,5 @@
 import spi
-
+import numpy as np
 class SPIne():
     def __init__(self, motors):
         self.device_0 = spi.openSPI(device="/dev/spidev1.1",
@@ -75,9 +75,9 @@ class SPIne():
             if spi_box[0] in self.motors_IDs:
                 box_range =  spi_box[1]
                 self.data_out_1[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
-
+        self.data_out_0[56::] = self.check_control_sum(self.data_out_0, 56)
         self.data_in_0 = spi.transfer(self.device_0, tuple(self.data_out_0))
-
+        self.data_out_1[56::] = self.check_control_sum(self.data_out_1, 56)
         self.data_in_1 = spi.transfer(self.device_1, tuple(self.data_out_1))
         # print(self.data_out_0)
         # print(self.data_in_0)
@@ -90,4 +90,23 @@ class SPIne():
             if spi_box[0] in self.motors_IDs:
                 box_range =  spi_box[1]
                 self.motors[self.motors_IDs.index(spi_box[0])].bytes_to_state(self.data_in_1[box_range[0]:box_range[1]])
+
+    def check_control_sum(self, data, length):
+        def xor(a, b):
+            result = ""
+            for i in range(len(a)):
+                if a[i] == b[i]:
+                    result += "0"
+                else:
+                    result += "1"
+            return result
+
+        data = np.uint32(data)
         
+        checksum = "{0:032b}".format(0)
+        
+        for i in range(0,length, 4):
+            data_32 = "{0:008b}".format(data[i+3]) + "{0:008b}".format(data[i+2]) + "{0:008b}".format(data[i+1]) + "{0:008b}".format(data[i])
+            checksum = xor(checksum, data_32)
+        return [int(checksum[0:8],2), int(checksum[8:16],2), int(checksum[16:24],2), int(checksum[24:32],2)][::-1]
+            
