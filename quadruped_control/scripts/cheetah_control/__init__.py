@@ -256,7 +256,7 @@ class cheetah_control():
     def motor_go_to_des_pos_wrt_body(self, leg_name, motors_names, pos_des, Kd, Kp, quad_kin, tmotors = {}):
         if self.use_ros:
             if self.check_zero_flag():
-                return None, 0
+                return None, 0, None, None, None, None
         q_cur = np.array([[0],
                                 [0],
                                 [0]], dtype = np.float)
@@ -302,6 +302,10 @@ class cheetah_control():
         q_goal =  np.array([[q_des[0]],
                             [q_des[1]],
                             [q_des[2]]]) # "-" is because the z-axis is inverted for each motor
+        
+        q_dot_goal = np.array([[0],
+                                [0],
+                                [0]], dtype = np.float)
 
         U = np.dot(Kp,q_goal - q_cur) + np.dot(Kd,q_dot_goal - q_dot_cur)
         
@@ -309,7 +313,7 @@ class cheetah_control():
             self.move_joint(motors_names[0], U[0])
             self.move_joint(motors_names[1], U[1])
             self.move_joint(motors_names[2], U[2])
-        return [U[0][0], U[1][0], U[2][0]], 1
+        return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
 
     def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3]):
@@ -367,17 +371,39 @@ class cheetah_control():
         p_RB_leg_B = np.dot(T_B_0_inv, P_RB_leg_0)[0:3].reshape(3,)
     
         U_sum = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-        U, flag = self.motor_go_to_des_pos_wrt_body('LF_leg', self.LF_leg, p_LF_leg_B, Kd, Kp, quad_kin, tmotors)
+        q_cur = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
+        q_cur_dot = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
+        q_des_dot = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
+        q_des = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
+
+        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('LF_leg', self.LF_leg, p_LF_leg_B, Kd, Kp, quad_kin, tmotors)
         if flag:
             U_sum['LF_leg'] = U
-        U, flag = self.motor_go_to_des_pos_wrt_body('RF_leg', self.RF_leg, p_RF_leg_B, Kd, Kp, quad_kin, tmotors)
+            q_cur['LF_leg'] = q_c
+            q_cur_dot['LF_leg'] = q_c_dot
+            q_des_dot['LF_leg'] = q_d_dot
+            q_des['LF_leg'] = q_d
+        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('RF_leg', self.RF_leg, p_RF_leg_B, Kd, Kp, quad_kin, tmotors)
         if flag:
             U_sum['RF_leg'] = U
-        U, flag = self.motor_go_to_des_pos_wrt_body('LB_leg', self.LB_leg, p_LB_leg_B, Kd, Kp, quad_kin, tmotors)
+            q_cur['RF_leg'] = q_c
+            q_cur_dot['RF_leg'] = q_c_dot
+            q_des_dot['RF_leg'] = q_d_dot
+            q_des['RF_leg'] = q_d
+            
+        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('LB_leg', self.LB_leg, p_LB_leg_B, Kd, Kp, quad_kin, tmotors)
         if flag:
             U_sum['LB_leg'] = U
-        U, flag = self.motor_go_to_des_pos_wrt_body('RB_leg', self.RB_leg, p_RB_leg_B, Kd, Kp, quad_kin, tmotors)
+            q_cur['LB_leg'] = q_c
+            q_cur_dot['LB_leg'] = q_c_dot
+            q_des_dot['LB_leg'] = q_d_dot
+            q_des['LB_leg'] = q_d
+        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('RB_leg', self.RB_leg, p_RB_leg_B, Kd, Kp, quad_kin, tmotors)
         if flag:
             U_sum['RB_leg'] = U
-        return U_sum, 1
+            q_cur['RB_leg'] = q_c
+            q_cur_dot['RB_leg'] = q_c_dot
+            q_des_dot['RB_leg'] = q_d_dot
+            q_des['RB_leg'] = q_d
+        return U_sum, 1, q_cur, q_cur_dot, q_des, q_des_dot
         

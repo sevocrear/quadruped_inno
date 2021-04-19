@@ -34,3 +34,4 @@ if __name__ == '__main__':
         if flag:
             data_to_send.data = T.ravel() # assign the array with the value you want to send
             pub.publish(data_to_send)
+            
