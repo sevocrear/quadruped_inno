@@ -6,12 +6,12 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 # https://www.codespeedy.com/visualize-data-from-csv-file-in-python/
-csv_file = "18_00_43_19_04_2021.csv"
+csv_file = "21_34_47_19_04_2021.csv"
 df_data = pd.read_csv(csv_file)
 
-
-LF_hip_angles_cur = df_data['LF_leg_knee_q_cur']
-LF_hip_angles_des = df_data['LF_leg_knee_q_des']
+# hip, thigh, knee
+LF_hip_angles_cur = df_data['LF_leg_thigh_q_cur']
+LF_hip_angles_des = df_data['LF_leg_thigh_q_des']
 time = df_data['time']
 LF_hip_angles_error = LF_hip_angles_des.subtract(LF_hip_angles_cur, fill_value = 0)
 

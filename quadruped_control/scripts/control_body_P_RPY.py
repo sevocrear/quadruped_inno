@@ -125,7 +125,6 @@ if __name__ == '__main__':
             
             U, flag, q_cur, q_cur_dot, q_des, q_des_dot = cheetah_control_pos.go_to_desired_RPY_of_base(
                 quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.375 + 0.05*np.cos(2*t)])
-            print(q_des, q_des_dot)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 for motor in motors:
