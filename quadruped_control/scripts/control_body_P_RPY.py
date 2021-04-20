@@ -141,52 +141,53 @@ if __name__ == '__main__':
                         motors[motor][2].set_torque(0)
                 spine.transfer_and_receive()
             # Update dataframe
-            # try:
-            #     df_len = len(df_data)
-            #     for motor in motors:
-            #         df_data.at[df_len,
-            #                    f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_hip_q_cur_dot'] = q_cur_dot[motor][0][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_thigh_q_cur_dot'] = q_cur_dot[motor][1][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_knee_q_cur_dot'] = q_cur_dot[motor][2][0]
+            if (t % 1) < 10e-3:
+                try:
+                    df_len = len(df_data)
+                    for motor in motors:
+                        df_data.at[df_len,
+                                f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
+                        df_data.at[df_len,
+                                f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
+                        df_data.at[df_len,
+                                f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
+                        df_data.at[df_len,
+                                f'{motor}_hip_q_cur_dot'] = q_cur_dot[motor][0][0]
+                        df_data.at[df_len,
+                                f'{motor}_thigh_q_cur_dot'] = q_cur_dot[motor][1][0]
+                        df_data.at[df_len,
+                                f'{motor}_knee_q_cur_dot'] = q_cur_dot[motor][2][0]
 
-            #         df_data.at[df_len,
-            #                    f'{motor}_hip_q_des'] = q_des[motor][0][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_thigh_q_des'] = q_des[motor][1][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_knee_q_des'] = q_des[motor][2][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_hip_q_des_dot'] = q_des_dot[motor][0][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_thigh_q_des_dot'] = q_des_dot[motor][1][0]
-            #         df_data.at[df_len,
-            #                    f'{motor}_knee_q_des_dot'] = q_des_dot[motor][2][0]
-            #     df_data.at[df_len, 'x_cur'] = 0
-            #     df_data.at[df_len, 'y_cur'] = 0
-            #     df_data.at[df_len, 'z_cur'] = 0
+                        df_data.at[df_len,
+                                f'{motor}_hip_q_des'] = q_des[motor][0][0]
+                        df_data.at[df_len,
+                                f'{motor}_thigh_q_des'] = q_des[motor][1][0]
+                        df_data.at[df_len,
+                                f'{motor}_knee_q_des'] = q_des[motor][2][0]
+                        df_data.at[df_len,
+                                f'{motor}_hip_q_des_dot'] = q_des_dot[motor][0][0]
+                        df_data.at[df_len,
+                                f'{motor}_thigh_q_des_dot'] = q_des_dot[motor][1][0]
+                        df_data.at[df_len,
+                                f'{motor}_knee_q_des_dot'] = q_des_dot[motor][2][0]
+                    df_data.at[df_len, 'x_cur'] = 0
+                    df_data.at[df_len, 'y_cur'] = 0
+                    df_data.at[df_len, 'z_cur'] = 0
 
-            #     df_data.at[df_len, 'x_des'] = 0
-            #     df_data.at[df_len, 'y_des'] = 0
-            #     df_data.at[df_len, 'z_des'] = 0
+                    df_data.at[df_len, 'x_des'] = 0
+                    df_data.at[df_len, 'y_des'] = 0
+                    df_data.at[df_len, 'z_des'] = 0
 
-            #     df_data.at[df_len, 'R_cur'] = 0
-            #     df_data.at[df_len, 'P_cur'] = 0
-            #     df_data.at[df_len, 'Y_cur'] = 0
+                    df_data.at[df_len, 'R_cur'] = 0
+                    df_data.at[df_len, 'P_cur'] = 0
+                    df_data.at[df_len, 'Y_cur'] = 0
 
-            #     df_data.at[df_len, 'R_des'] = 0
-            #     df_data.at[df_len, 'P_des'] = 0
-            #     df_data.at[df_len, 'Y_des'] = 0
-            #     df_data.at[df_len, 'time'] = t
-            # except IndexError:
-            #     pass
+                    df_data.at[df_len, 'R_des'] = 0
+                    df_data.at[df_len, 'P_des'] = 0
+                    df_data.at[df_len, 'Y_des'] = 0
+                    df_data.at[df_len, 'time'] = t
+                except IndexError:
+                    pass
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
