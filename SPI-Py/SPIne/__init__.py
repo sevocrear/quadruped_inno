@@ -71,21 +71,19 @@ class SPIne():
             if spi_box[0] in self.motors_IDs:
                 box_range =  spi_box[1]
                 self.data_out_0[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
-        for spi_box in self.spi_box_placing_1:
-            if spi_box[0] in self.motors_IDs:
-                box_range =  spi_box[1]
-                self.data_out_1[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
         self.data_out_0[56::] = self.check_control_sum(self.data_out_0, 56)
         self.data_in_0 = spi.transfer(self.device_0, tuple(self.data_out_0))
-        self.data_out_1[56::] = self.check_control_sum(self.data_out_1, 56)
-        self.data_in_1 = spi.transfer(self.device_1, tuple(self.data_out_1))
-        # print(self.data_out_0)
-        # print(self.data_in_0)
-
         for spi_box in self.spi_box_placing_0:
             if spi_box[0] in self.motors_IDs:
                 box_range =  spi_box[1]
                 self.motors[self.motors_IDs.index(spi_box[0])].bytes_to_state(self.data_in_0[box_range[0]:box_range[1]])
+
+        for spi_box in self.spi_box_placing_1:
+            if spi_box[0] in self.motors_IDs:
+                box_range =  spi_box[1]
+                self.data_out_1[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
+        self.data_out_1[56::] = self.check_control_sum(self.data_out_1, 56)
+        self.data_in_1 = spi.transfer(self.device_1, tuple(self.data_out_1))
         for spi_box in self.spi_box_placing_1:
             if spi_box[0] in self.motors_IDs:
                 box_range =  spi_box[1]

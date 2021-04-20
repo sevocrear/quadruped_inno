@@ -301,7 +301,7 @@ class cheetah_control():
 
         q_goal =  np.array([[q_des[0]],
                             [q_des[1]],
-                            [q_des[2]]]) # "-" is because the z-axis is inverted for each motor
+                            [q_des[2]]]) 
         
         q_dot_goal = np.array([[0],
                                 [0],
@@ -317,7 +317,20 @@ class cheetah_control():
         
 
     def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3]):
-        x_des, y_des, z_des, roll, pitch, yaw = 0,0, 0., 0,0,0
+        def calc(leg_name, leg_pos, leg):
+            P_leg_0 = np.array([[leg_pos[0]],
+                                [leg_pos[1]],
+                                [leg_pos[2]],
+                                [1]])
+            p_leg_B = np.dot(T_B_0_inv, P_leg_0)[0:3].reshape(3,)
+            U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body(leg_name, leg, p_leg_B, Kd, Kp, quad_kin, tmotors)
+            if flag:
+                U_sum[leg_name] = U
+                q_cur[leg_name] = q_c
+                q_cur_dot[leg_name] = q_c_dot
+                q_des_dot[leg_name] = q_d_dot
+                q_des[leg_name] = q_d
+
         if self.use_ros:
             if not self.check_zero_flag():
                 for i in range(len(self.config.doubles)):
@@ -345,65 +358,14 @@ class cheetah_control():
         T_B_0_inv[0:3,3] = -np.dot(np.transpose(R),d).reshape(3,)
         T_B_0_inv[3,3] = 1
 
-        P_LF_leg_0 = np.array([[LF_leg_pos[0]],
-                                [LF_leg_pos[1]],
-                                [LF_leg_pos[2]],
-                                [1]])
-        P_RF_leg_0 = np.array([[RF_leg_pos[0]],
-                                [RF_leg_pos[1]],
-                                [RF_leg_pos[2]],
-                                [1]])
-        P_LB_leg_0 = np.array([[LB_leg_pos[0]],
-                                [LB_leg_pos[1]],
-                                [LB_leg_pos[2]],
-                                [1]])
-        P_RB_leg_0 = np.array([[RB_leg_pos[0]],
-                                [RB_leg_pos[1]],
-                                [RB_leg_pos[2]],
-                                [1]])
-
-        p_LF_leg_B = np.dot(T_B_0_inv, P_LF_leg_0)[0:3].reshape(3,)
-
-        p_RF_leg_B = np.dot(T_B_0_inv, P_RF_leg_0)[0:3].reshape(3,)
-
-        p_LB_leg_B = np.dot(T_B_0_inv, P_LB_leg_0)[0:3].reshape(3,)
-
-        p_RB_leg_B = np.dot(T_B_0_inv, P_RB_leg_0)[0:3].reshape(3,)
-    
         U_sum = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-        q_cur = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-        q_cur_dot = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-        q_des_dot = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-        q_des = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
-
-        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('LF_leg', self.LF_leg, p_LF_leg_B, Kd, Kp, quad_kin, tmotors)
-        if flag:
-            U_sum['LF_leg'] = U
-            q_cur['LF_leg'] = q_c
-            q_cur_dot['LF_leg'] = q_c_dot
-            q_des_dot['LF_leg'] = q_d_dot
-            q_des['LF_leg'] = q_d
-        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('RF_leg', self.RF_leg, p_RF_leg_B, Kd, Kp, quad_kin, tmotors)
-        if flag:
-            U_sum['RF_leg'] = U
-            q_cur['RF_leg'] = q_c
-            q_cur_dot['RF_leg'] = q_c_dot
-            q_des_dot['RF_leg'] = q_d_dot
-            q_des['RF_leg'] = q_d
-            
-        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('LB_leg', self.LB_leg, p_LB_leg_B, Kd, Kp, quad_kin, tmotors)
-        if flag:
-            U_sum['LB_leg'] = U
-            q_cur['LB_leg'] = q_c
-            q_cur_dot['LB_leg'] = q_c_dot
-            q_des_dot['LB_leg'] = q_d_dot
-            q_des['LB_leg'] = q_d
-        U, flag, q_c, q_d, q_c_dot, q_d_dot = self.motor_go_to_des_pos_wrt_body('RB_leg', self.RB_leg, p_RB_leg_B, Kd, Kp, quad_kin, tmotors)
-        if flag:
-            U_sum['RB_leg'] = U
-            q_cur['RB_leg'] = q_c
-            q_cur_dot['RB_leg'] = q_c_dot
-            q_des_dot['RB_leg'] = q_d_dot
-            q_des['RB_leg'] = q_d
+        q_cur = copy.deepcopy(U_sum)
+        q_cur_dot = copy.deepcopy(U_sum)
+        q_des_dot = copy.deepcopy(U_sum)
+        q_des = copy.deepcopy(U_sum)
+        calc('RF_leg', RF_leg_pos, self.RF_leg)
+        calc('LF_leg', LF_leg_pos, self.LF_leg)
+        calc('RB_leg', RB_leg_pos, self.RB_leg)
+        calc('LB_leg', LB_leg_pos, self.LB_leg)
         return U_sum, 1, q_cur, q_cur_dot, q_des, q_des_dot
         
