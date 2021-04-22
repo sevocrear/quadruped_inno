@@ -17,7 +17,7 @@ from quadruped_kinematics import quadruped_kinematics
 
 
 if __name__ == '__main__':
-    use_ros = False
+    use_ros = True
 
     if use_ros == False:
         from SPIne import SPIne
@@ -141,7 +141,7 @@ if __name__ == '__main__':
                         motors[motor][2].set_torque(0)
                 spine.transfer_and_receive()
             # Update dataframe
-            if (t % 1) < 10e-3:
+            if (t % 0.01) < 10e-4:
                 try:
                     df_len = len(df_data)
                     for motor in motors:
@@ -205,16 +205,16 @@ if __name__ == '__main__':
                 break
             else:
                 break
-        # except:
-        #     df_data.to_csv(time.strftime("%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
-        #     if not use_ros:
-        #         for motor in motors:
-        #             motors[motor][0].disable()
-        #             motors[motor][1].disable()
-        #             motors[motor][2].disable()
-        #         spine.transfer_and_receive()
-        #     else:
-        #         break
+        except:
+            df_data.to_csv(time.strftime("%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
+            if not use_ros:
+                for motor in motors:
+                    motors[motor][0].disable()
+                    motors[motor][1].disable()
+                    motors[motor][2].disable()
+                spine.transfer_and_receive()
+            else:
+                break
     df_data.to_csv(time.strftime("%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
     if not use_ros:
         for motor in motors:

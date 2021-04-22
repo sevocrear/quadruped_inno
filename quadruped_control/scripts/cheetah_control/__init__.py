@@ -346,6 +346,8 @@ class cheetah_control():
                         pitch = self.config.doubles[i].value
                     elif self.config.doubles[i].name == 'Y_des':
                         yaw = self.config.doubles[i].value
+            else:
+                x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
         else:
             x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
 
