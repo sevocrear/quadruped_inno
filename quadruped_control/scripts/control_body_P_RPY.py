@@ -38,7 +38,7 @@ if __name__ == '__main__':
     quad_kin = quadruped_kinematics(
         [link_size / 1000 for link_size in links_sizes_mm])
 
-    # initialize feet poses
+    # initialize feet poses wrt the world
     LF_foot_pos = [quad_kin.links_size[1] + quad_kin.links_size[3], -
                    (quad_kin.links_size[0] + quad_kin.links_size[3]), 0]
     RF_foot_pos = [-(quad_kin.links_size[1] + quad_kin.links_size[3]), -
@@ -124,7 +124,7 @@ if __name__ == '__main__':
             t = time.time() - start_time
             Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
             U, flag, q_cur, q_cur_dot, q_des, q_des_dot = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.375 + 0.05*np.cos(3*t)])
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(1*t)], use_input_traj = True)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 for motor in motors:
@@ -141,53 +141,53 @@ if __name__ == '__main__':
                         motors[motor][2].set_torque(0)
                 spine.transfer_and_receive()
             # Update dataframe
-            if (t % 0.01) < 10e-4:
-                try:
-                    df_len = len(df_data)
-                    for motor in motors:
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_cur_dot'] = q_cur_dot[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_cur_dot'] = q_cur_dot[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_cur_dot'] = q_cur_dot[motor][2][0]
+            # if (t % 0.01) < 10e-4:
+            #     try:
+            #         df_len = len(df_data)
+            #         for motor in motors:
+            #             df_data.at[df_len,
+            #                     f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_hip_q_cur_dot'] = q_cur_dot[motor][0][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_thigh_q_cur_dot'] = q_cur_dot[motor][1][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_knee_q_cur_dot'] = q_cur_dot[motor][2][0]
 
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_des'] = q_des[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_des'] = q_des[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_des'] = q_des[motor][2][0]
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_des_dot'] = q_des_dot[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_des_dot'] = q_des_dot[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_des_dot'] = q_des_dot[motor][2][0]
-                    df_data.at[df_len, 'x_cur'] = 0
-                    df_data.at[df_len, 'y_cur'] = 0
-                    df_data.at[df_len, 'z_cur'] = 0
+            #             df_data.at[df_len,
+            #                     f'{motor}_hip_q_des'] = q_des[motor][0][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_thigh_q_des'] = q_des[motor][1][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_knee_q_des'] = q_des[motor][2][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_hip_q_des_dot'] = q_des_dot[motor][0][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_thigh_q_des_dot'] = q_des_dot[motor][1][0]
+            #             df_data.at[df_len,
+            #                     f'{motor}_knee_q_des_dot'] = q_des_dot[motor][2][0]
+            #         df_data.at[df_len, 'x_cur'] = 0
+            #         df_data.at[df_len, 'y_cur'] = 0
+            #         df_data.at[df_len, 'z_cur'] = 0
 
-                    df_data.at[df_len, 'x_des'] = 0
-                    df_data.at[df_len, 'y_des'] = 0
-                    df_data.at[df_len, 'z_des'] = 0
+            #         df_data.at[df_len, 'x_des'] = 0
+            #         df_data.at[df_len, 'y_des'] = 0
+            #         df_data.at[df_len, 'z_des'] = 0
 
-                    df_data.at[df_len, 'R_cur'] = 0
-                    df_data.at[df_len, 'P_cur'] = 0
-                    df_data.at[df_len, 'Y_cur'] = 0
+            #         df_data.at[df_len, 'R_cur'] = 0
+            #         df_data.at[df_len, 'P_cur'] = 0
+            #         df_data.at[df_len, 'Y_cur'] = 0
 
-                    df_data.at[df_len, 'R_des'] = 0
-                    df_data.at[df_len, 'P_des'] = 0
-                    df_data.at[df_len, 'Y_des'] = 0
-                    df_data.at[df_len, 'time'] = t
-                except IndexError:
-                    pass
+            #         df_data.at[df_len, 'R_des'] = 0
+            #         df_data.at[df_len, 'P_des'] = 0
+            #         df_data.at[df_len, 'Y_des'] = 0
+            #         df_data.at[df_len, 'time'] = t
+            #     except IndexError:
+            #         pass
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:

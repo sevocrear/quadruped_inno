@@ -316,7 +316,7 @@ class cheetah_control():
         return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
 
-    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3]):
+    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3], use_input_traj = False):
         def calc(leg_name, leg_pos, leg):
             P_leg_0 = np.array([[leg_pos[0]],
                                 [leg_pos[1]],
@@ -331,7 +331,7 @@ class cheetah_control():
                 q_des_dot[leg_name] = q_d_dot
                 q_des[leg_name] = q_d
 
-        if self.use_ros:
+        if self.use_ros and not use_input_traj:
             if not self.check_zero_flag():
                 for i in range(len(self.config.doubles)):
                     if self.config.doubles[i].name == 'x_body_des':
@@ -348,7 +348,7 @@ class cheetah_control():
                         yaw = self.config.doubles[i].value
             else:
                 x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
-        else:
+        elif use_input_traj:
             x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
 
         R =  np.linalg.multi_dot([quad_kin.transforms.Rz(yaw), quad_kin.transforms.Ry(pitch), quad_kin.transforms.Rx(roll)])[0:3,0:3]
