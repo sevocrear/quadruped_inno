@@ -98,16 +98,18 @@ if __name__ == '__main__':
             exit()
 
     # create pandas dataframe to collect data
-    df_data = pd.DataFrame(columns=["LF_leg_hip_q_cur", "LF_leg_thigh_q_cur", "LF_leg_knee_q_cur", "LF_leg_hip_q_cur_dot", "LF_leg_thigh_q_cur_dot", "LF_leg_knee_q_cur_dot",
-                                    "RF_leg_hip_q_cur", "RF_leg_thigh_q_cur", "RF_leg_knee_q_cur", "RF_leg_hip_q_cur_dot", "RF_leg_thigh_q_cur_dot", "RF_leg_knee_q_cur_dot",
-                                    "LB_leg_hip_q_cur", "LB_leg_thigh_q_cur", "LB_leg_knee_q_cur", "LB_leg_hip_q_cur_dot", "LB_leg_thigh_q_cur_dot", "LB_leg_knee_q_cur_dot",
-                                    "RB_leg_hip_q_cur", "RB_leg_thigh_q_cur", "RB_leg_knee_q_cur", "RB_leg_hip_q_cur_dot", "RB_leg_thigh_q_cur_dot", "RB_leg_knee_q_cur_dot",
+    df_data = pd.DataFrame(columns=["LF_leg_hip_q_cur", "LF_leg_thigh_q_cur", "LF_leg_knee_q_cur", "LF_leg_hip_q_dot_cur", "LF_leg_thigh_q_dot_cur", "LF_leg_knee_q_dot_cur",
+                                    "RF_leg_hip_q_cur", "RF_leg_thigh_q_cur", "RF_leg_knee_q_cur", "RF_leg_hip_q_dot_cur", "RF_leg_thigh_q_dot_cur", "RF_leg_knee_q_dot_cur",
+                                    "LB_leg_hip_q_cur", "LB_leg_thigh_q_cur", "LB_leg_knee_q_cur", "LB_leg_hip_q_dot_cur", "LB_leg_thigh_q_dot_cur", "LB_leg_knee_q_dot_cur",
+                                    "RB_leg_hip_q_cur", "RB_leg_thigh_q_cur", "RB_leg_knee_q_cur", "RB_leg_hip_q_dot_cur", "RB_leg_thigh_q_dot_cur", "RB_leg_knee_q_dot_cur",
 
 
-                                    "LF_leg_hip_q_des", "LF_leg_thigh_q_des", "LF_leg_knee_q_des", "LF_leg_hip_q_des_dot", "LF_leg_thigh_q_des_dot", "LF_leg_knee_q_des_dot",
-                                    "RF_leg_hip_q_des", "RF_leg_thigh_q_des", "RF_leg_knee_q_des", "RF_leg_hip_q_des_dot", "RF_leg_thigh_q_des_dot", "RF_leg_knee_q_des_dot",
-                                    "LB_leg_hip_q_des", "LB_leg_thigh_q_des", "LB_leg_knee_q_des", "LB_leg_hip_q_des_dot", "LB_leg_thigh_q_des_dot", "LB_leg_knee_q_des_dot",
-                                    "RB_leg_hip_q_des", "RB_leg_thigh_q_des", "RB_leg_knee_q_des", "RB_leg_hip_q_des_dot", "RB_leg_thigh_q_des_dot", "RB_leg_knee_q_des_dot",
+                                    "LF_leg_hip_q_des", "LF_leg_thigh_q_des", "LF_leg_knee_q_des", "LF_leg_hip_q_dot_des", "LF_leg_thigh_q_dot_des", "LF_leg_knee_q_dot_des",
+                                    "RF_leg_hip_q_des", "RF_leg_thigh_q_des", "RF_leg_knee_q_des", "RF_leg_hip_q_dot_des", "RF_leg_thigh_q_dot_des", "RF_leg_knee_q_dot_des",
+                                    "LB_leg_hip_q_des", "LB_leg_thigh_q_des", "LB_leg_knee_q_des", "LB_leg_hip_q_dot_des", "LB_leg_thigh_q_dot_des", "LB_leg_knee_q_dot_des",
+                                    "RB_leg_hip_q_des", "RB_leg_thigh_q_des", "RB_leg_knee_q_des", "RB_leg_hip_q_dot_des", "RB_leg_thigh_q_dot_des", "RB_leg_knee_q_dot_des",
+
+
 
                                     "x_cur", "y_cur", "z_cur", "R_cur", "P_cur", "Y_cur",
                                     "x_des", "y_des", "z_des", "R_des", "P_des", "Y_des",
@@ -123,8 +125,8 @@ if __name__ == '__main__':
 
             t = time.time() - start_time
             Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
-            U, flag, q_cur, q_cur_dot, q_des, q_des_dot = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(1*t)], use_input_traj = True)
+            U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(6*t)], use_input_traj = True)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 for motor in motors:
@@ -140,9 +142,9 @@ if __name__ == '__main__':
                         motors[motor][1].set_torque(0)
                         motors[motor][2].set_torque(0)
                 spine.transfer_and_receive()
-            st = time.time()
+                
             # Update dataframe
-            if (t % 0.01) < 10e-4:
+            if (t % 0.05) < 10e-4:
                 try:
                     df_len = len(df_data)
                     for motor in motors:
@@ -153,11 +155,11 @@ if __name__ == '__main__':
                         df_data.at[df_len,
                                 f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
                         df_data.at[df_len,
-                                f'{motor}_hip_q_cur_dot'] = q_cur_dot[motor][0][0]
+                                f'{motor}_hip_q_dot_cur'] = q_dot_cur[motor][0][0]
                         df_data.at[df_len,
-                                f'{motor}_thigh_q_cur_dot'] = q_cur_dot[motor][1][0]
+                                f'{motor}_thigh_q_dot_cur'] = q_dot_cur[motor][1][0]
                         df_data.at[df_len,
-                                f'{motor}_knee_q_cur_dot'] = q_cur_dot[motor][2][0]
+                                f'{motor}_knee_q_dot_cur'] = q_dot_cur[motor][2][0]
 
                         df_data.at[df_len,
                                 f'{motor}_hip_q_des'] = q_des[motor][0][0]
@@ -166,11 +168,11 @@ if __name__ == '__main__':
                         df_data.at[df_len,
                                 f'{motor}_knee_q_des'] = q_des[motor][2][0]
                         df_data.at[df_len,
-                                f'{motor}_hip_q_des_dot'] = q_des_dot[motor][0][0]
+                                f'{motor}_hip_q_dot_des'] = q_dot_des[motor][0][0]
                         df_data.at[df_len,
-                                f'{motor}_thigh_q_des_dot'] = q_des_dot[motor][1][0]
+                                f'{motor}_thigh_q_dot_des'] = q_dot_des[motor][1][0]
                         df_data.at[df_len,
-                                f'{motor}_knee_q_des_dot'] = q_des_dot[motor][2][0]
+                                f'{motor}_knee_q_dot_des'] = q_dot_des[motor][2][0]
                     df_data.at[df_len, 'x_cur'] = 0
                     df_data.at[df_len, 'y_cur'] = 0
                     df_data.at[df_len, 'z_cur'] = 0
@@ -189,7 +191,6 @@ if __name__ == '__main__':
                     df_data.at[df_len, 'time'] = t
                 except IndexError:
                     pass
-            print(time.time()-st)
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
