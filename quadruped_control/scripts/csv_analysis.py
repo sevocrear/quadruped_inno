@@ -6,21 +6,41 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 # https://www.codespeedy.com/visualize-data-from-csv-file-in-python/
-csv_file = "09_08_02_22_04_2021.csv"
+
+name = "A_0_075_w_3_14"
+csv_file = f"{name}.csv"
 df_data = pd.read_csv(csv_file)
 
-# hip, thigh, knee
-LF_hip_angles_cur = df_data['LB_leg_knee_q_cur']
-LF_hip_angles_des = df_data['LB_leg_knee_q_des']
-time = df_data['time']
-LF_hip_angles_error = LF_hip_angles_des.subtract(LF_hip_angles_cur, fill_value = 0)
+# thigh, thigh, thigh
+data_to_show = ["U",""]
 
-plt.plot(time, LF_hip_angles_cur, label = 'q_cur')
-plt.plot(time, LF_hip_angles_des, label = 'q_des')
-plt.plot(time, LF_hip_angles_error, label = 'error')
-plt.xlabel('time, sec')
-plt.ylabel('LF_hip_q')
-plt.grid()
-plt.title('Angles Plot')
-plt.legend()
+RB_thigh_angles_cur = df_data[f'RB_leg_thigh_{data_to_show[0]}_cur{data_to_show[1]}']
+RB_thigh_angles_des = df_data[f'RB_leg_thigh_{data_to_show[0]}_des{data_to_show[1]}']
+time = df_data['time']
+RB_thigh_angles_error = RB_thigh_angles_des.subtract(RB_thigh_angles_cur, fill_value = 0)
+
+RB_knee_angles_cur = df_data[f'RB_leg_knee_{data_to_show[0]}_cur{data_to_show[1]}']
+RB_knee_angles_des = df_data[f'RB_leg_knee_{data_to_show[0]}_des{data_to_show[1]}']
+RB_knee_angles_error = RB_knee_angles_des.subtract(RB_knee_angles_cur, fill_value = 0)
+
+fig, ax = plt.subplots(2, 1)
+
+ax[0].plot(time, RB_thigh_angles_cur, label = f'{data_to_show[0]}_cur{data_to_show[1]}')
+ax[0].plot(time, RB_thigh_angles_des, label = f'{data_to_show[0]}_des{data_to_show[1]}')
+ax[0].plot(time, RB_thigh_angles_error, label = 'error')
+ax[0].set_ylabel('thigh angles, rad')
+ax[0].grid()
+ax[0].legend()
+
+ax[1].plot(time, RB_knee_angles_cur, label = f'{data_to_show[0]}_cur{data_to_show[1]}')
+ax[1].plot(time, RB_knee_angles_des, label = f'{data_to_show[0]}_des{data_to_show[1]}')
+ax[1].plot(time, RB_knee_angles_error, label = 'error')
+ax[1].set_xlabel('time, sec')
+ax[1].set_ylabel('knee angles, rad')
+ax[1].grid()
+ax[1].legend()
+
+
+
 plt.show()
+fig.savefig(f"plots/{data_to_show[0]}_{data_to_show[1]}_{name}.svg", format="svg", dpi=300)
