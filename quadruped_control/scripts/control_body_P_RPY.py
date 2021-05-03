@@ -14,7 +14,7 @@ import numpy as np
 import time
 import sympy as sym
 from quadruped_kinematics import quadruped_kinematics
-
+from log_data import save_data
 
 if __name__ == '__main__':
     use_ros = True
@@ -97,25 +97,9 @@ if __name__ == '__main__':
             print('Motors didn\'t initialize. Try again')
             exit()
 
-    # create pandas dataframe to collect data
-    df_data = pd.DataFrame(columns=["LF_leg_hip_q_cur", "LF_leg_thigh_q_cur", "LF_leg_knee_q_cur", "LF_leg_hip_q_dot_cur", "LF_leg_thigh_q_dot_cur", "LF_leg_knee_q_dot_cur",
-                                    "RF_leg_hip_q_cur", "RF_leg_thigh_q_cur", "RF_leg_knee_q_cur", "RF_leg_hip_q_dot_cur", "RF_leg_thigh_q_dot_cur", "RF_leg_knee_q_dot_cur",
-                                    "LB_leg_hip_q_cur", "LB_leg_thigh_q_cur", "LB_leg_knee_q_cur", "LB_leg_hip_q_dot_cur", "LB_leg_thigh_q_dot_cur", "LB_leg_knee_q_dot_cur",
-                                    "RB_leg_hip_q_cur", "RB_leg_thigh_q_cur", "RB_leg_knee_q_cur", "RB_leg_hip_q_dot_cur", "RB_leg_thigh_q_dot_cur", "RB_leg_knee_q_dot_cur",
+    # object for storing data
+    data_saver = save_data()
 
-
-                                    "LF_leg_hip_q_des", "LF_leg_thigh_q_des", "LF_leg_knee_q_des", "LF_leg_hip_q_dot_des", "LF_leg_thigh_q_dot_des", "LF_leg_knee_q_dot_des",
-                                    "RF_leg_hip_q_des", "RF_leg_thigh_q_des", "RF_leg_knee_q_des", "RF_leg_hip_q_dot_des", "RF_leg_thigh_q_dot_des", "RF_leg_knee_q_dot_des",
-                                    "LB_leg_hip_q_des", "LB_leg_thigh_q_des", "LB_leg_knee_q_des", "LB_leg_hip_q_dot_des", "LB_leg_thigh_q_dot_des", "LB_leg_knee_q_dot_des",
-                                    "RB_leg_hip_q_des", "RB_leg_thigh_q_des", "RB_leg_knee_q_des", "RB_leg_hip_q_dot_des", "RB_leg_thigh_q_dot_des", "RB_leg_knee_q_dot_des",
-
-
-
-                                    "x_cur", "y_cur", "z_cur", "R_cur", "P_cur", "Y_cur",
-                                    "x_des", "y_des", "z_des", "R_des", "P_des", "Y_des",
-                                    "time"
-
-                                    ])
     start_time = time.time()
     while not rospy.is_shutdown():
         try:
@@ -126,7 +110,7 @@ if __name__ == '__main__':
             t = time.time() - start_time
             Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
             U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(6*t)], use_input_traj = True)
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(3*t)], use_input_traj = True)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 for motor in motors:
@@ -142,63 +126,16 @@ if __name__ == '__main__':
                         motors[motor][1].set_torque(0)
                         motors[motor][2].set_torque(0)
                 spine.transfer_and_receive()
-                
-            # Update dataframe
-            if (t % 0.05) < 10e-4:
-                try:
-                    df_len = len(df_data)
-                    for motor in motors:
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_dot_cur'] = q_dot_cur[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_dot_cur'] = q_dot_cur[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_dot_cur'] = q_dot_cur[motor][2][0]
 
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_des'] = q_des[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_des'] = q_des[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_des'] = q_des[motor][2][0]
-                        df_data.at[df_len,
-                                f'{motor}_hip_q_dot_des'] = q_dot_des[motor][0][0]
-                        df_data.at[df_len,
-                                f'{motor}_thigh_q_dot_des'] = q_dot_des[motor][1][0]
-                        df_data.at[df_len,
-                                f'{motor}_knee_q_dot_des'] = q_dot_des[motor][2][0]
-                    df_data.at[df_len, 'x_cur'] = 0
-                    df_data.at[df_len, 'y_cur'] = 0
-                    df_data.at[df_len, 'z_cur'] = 0
-
-                    df_data.at[df_len, 'x_des'] = 0
-                    df_data.at[df_len, 'y_des'] = 0
-                    df_data.at[df_len, 'z_des'] = 0
-
-                    df_data.at[df_len, 'R_cur'] = 0
-                    df_data.at[df_len, 'P_cur'] = 0
-                    df_data.at[df_len, 'Y_cur'] = 0
-
-                    df_data.at[df_len, 'R_des'] = 0
-                    df_data.at[df_len, 'P_des'] = 0
-                    df_data.at[df_len, 'Y_des'] = 0
-                    df_data.at[df_len, 'time'] = t
-                except IndexError:
-                    pass
+            data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
+            
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
             # save dataframe to csv file
-            df_data.to_csv(time.strftime(
-                "%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
+            data_saver.save_data_to_csv()
             if not use_ros:
                 for motor in motors:
                     motors[motor][0].disable()
@@ -209,7 +146,7 @@ if __name__ == '__main__':
             else:
                 break
         # except:
-        #     df_data.to_csv(time.strftime("%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
+        #     data_saver.save_data_to_csv()
         #     if not use_ros:
         #         for motor in motors:
         #             motors[motor][0].disable()
@@ -218,7 +155,7 @@ if __name__ == '__main__':
         #         spine.transfer_and_receive()
         #     else:
         #         break
-    df_data.to_csv(time.strftime("%H_%M_%S_%d_%m_%Y.csv", time.gmtime()))
+    data_saver.save_data_to_csv()
     if not use_ros:
         for motor in motors:
             motors[motor][0].disable()
