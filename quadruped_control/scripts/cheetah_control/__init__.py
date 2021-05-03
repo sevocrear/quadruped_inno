@@ -197,61 +197,6 @@ class cheetah_control():
                 result = self.config.bools[i].value
         return result
 
-
-    def leg_traj_track(self, t, leg_name, motors_names, traj_des, Kd, Kp, quad_kin):
-        if not self.check_zero_flag():
-            q_cur = np.array([[0],
-                            [0],
-                            [0]], dtype = np.float)
-                
-            q_dot_cur = np.array([[0],
-                            [0],
-                            [0]], dtype = np.float)
-
-            for idx, motor in enumerate(motors_names):
-                q_cur[idx] = self.joints_positions[motor]
-                q_dot_cur[idx] = self.joints_velocities[motor]
-            
-            x_des_,x_dot_des_, y_des_, y_dot_des_, z_des_, z_dot_des_ = list(map(lambda x: x(t), traj_des))
-
-            pos_des = [x_des_, y_des_, z_des_]
-            vel_des = [x_dot_des_, y_dot_des_, z_dot_des_]
-            if leg_name == "LF_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_LF, pos = pos_des)
-
-                q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.LF_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
-                                                                                                            [vel_des[2]]]))
-            elif leg_name == "LB_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_LB, pos = pos_des, flag = 1)
-
-                q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.LB_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
-                                                                                                            [vel_des[2]]]))
-            elif leg_name == "RB_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv = 1)
-
-                q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.RB_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
-                                                                                                            [vel_des[2]]]))
-            elif leg_name == "RF_leg":
-                q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1, flag_inv = 1)
-
-                q_dot_goal = - np.dot(np.linalg.pinv(quad_kin.RF_LEG_JAC_LAMBD(q_des[0], q_des[1], q_des[2])), np.array([[vel_des[0]],																												[vel_des[1]],
-                                                                                                            [vel_des[2]]]))		
-            else: print('wrong input to traj')
-            
-
-            # q_dot_goal = np.array([[0],
-            # 			  [0],
-            # 			  [0]], dtype = np.float)
-
-            q_goal = - np.array([[q_des[0]],
-                                [q_des[1]],
-                                [q_des[2]]]) # "-" is because the z-axis is inverted for each motor
-
-            U = np.dot(Kp,q_goal - q_cur) + np.dot(Kd,q_dot_goal - q_dot_cur)
-
-            self.move_joint(motors_names[0], U[0])
-            self.move_joint(motors_names[1], U[1])
-            self.move_joint(motors_names[2], U[2])
     
     def motor_go_to_des_pos_wrt_body(self, leg_name, motors_names, pos_des, Kd, Kp, quad_kin, tmotors = {}):
         if self.use_ros:
