@@ -315,4 +315,12 @@ class cheetah_control():
         calc('RB_leg', RB_leg_pos, self.RB_leg)
         calc('LB_leg', LB_leg_pos, self.LB_leg)
         return U_sum, 1, q_cur, q_cur_dot, q_des, q_des_dot
+
+    def motor_set_torque(self,motor, U):
+        # print("Function a is running at time: " + str(int(time.time())) + " seconds.")
+
+        motor[0].set_torque(U[0])
+        motor[1].set_torque(U[1])
+        motor[2].set_torque(U[2])
+
         

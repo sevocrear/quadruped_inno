@@ -1,5 +1,7 @@
 import spi
 import numpy as np
+import threading
+import time
 class SPIne():
     def __init__(self, motors):
         self.device_0 = spi.openSPI(device="/dev/spidev1.1",
@@ -65,30 +67,22 @@ class SPIne():
                                 [[3,2],[29,38]],
                                 [[3,1],[38,47]],
                                 [[3,0],[47,56]]]
-    
+
+    def full_and_send(self, spi_box_placing, data_out, data_in, device):
+            for spi_box in spi_box_placing:
+                if spi_box[0] in self.motors_IDs:
+                    box_range =  spi_box[1]
+                    data_out[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
+            data_out[56::] = self.check_control_sum(data_out, 56)
+            data_in = spi.transfer(device, tuple(data_out))
+            for spi_box in spi_box_placing:
+                if spi_box[0] in self.motors_IDs:
+                    box_range =  spi_box[1]
+                    self.motors[self.motors_IDs.index(spi_box[0])].bytes_to_state(data_in[box_range[0]:box_range[1]])
+
     def transfer_and_receive(self, ):
-        for spi_box in self.spi_box_placing_0:
-            if spi_box[0] in self.motors_IDs:
-                box_range =  spi_box[1]
-                self.data_out_0[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
-        self.data_out_0[56::] = self.check_control_sum(self.data_out_0, 56)
-        self.data_in_0 = spi.transfer(self.device_0, tuple(self.data_out_0))
-        for spi_box in self.spi_box_placing_0:
-            if spi_box[0] in self.motors_IDs:
-                box_range =  spi_box[1]
-                self.motors[self.motors_IDs.index(spi_box[0])].bytes_to_state(self.data_in_0[box_range[0]:box_range[1]])
-
-        for spi_box in self.spi_box_placing_1:
-            if spi_box[0] in self.motors_IDs:
-                box_range =  spi_box[1]
-                self.data_out_1[box_range[0]:box_range[1]] = self.motors[self.motors_IDs.index(spi_box[0])].data_out
-        self.data_out_1[56::] = self.check_control_sum(self.data_out_1, 56)
-        self.data_in_1 = spi.transfer(self.device_1, tuple(self.data_out_1))
-        for spi_box in self.spi_box_placing_1:
-            if spi_box[0] in self.motors_IDs:
-                box_range =  spi_box[1]
-                self.motors[self.motors_IDs.index(spi_box[0])].bytes_to_state(self.data_in_1[box_range[0]:box_range[1]])
-
+        self.full_and_send(self.spi_box_placing_0, self.data_out_0, self.data_in_0, self.device_0)
+        self.full_and_send(self.spi_box_placing_1, self.data_out_1, self.data_in_1, self.device_1)
     def check_control_sum(self, data, length):
         def xor(a, b):
             result = ""

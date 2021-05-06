@@ -15,15 +15,38 @@ import time
 import sympy as sym
 from quadruped_kinematics import quadruped_kinematics
 from log_data import save_data
+import threading
+
+
+def control_main():
+    global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd
+    if use_ros:
+        if not cheetah_control_pos.joints_positions:
+            pass
+    st = time.time()
+    t = time.time() - start_time
+    Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
+    U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
+        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(3*t)], use_input_traj = True)
+    cheetah_control_pos.go_to_zero_all(Kp, Kd)
+    if not use_ros:
+        cheetah_control_pos.motor_set_torque(motors['LF_leg'], U['LF_leg'])
+        cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
+        cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
+        cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
+        spine.transfer_and_receive()
+    # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
+    if use_ros:
+        cheetah_control_pos.rate.sleep()
 
 if __name__ == '__main__':
-    use_ros = True
+    use_ros = False
 
     if use_ros == False:
         from SPIne import SPIne
         from motors.tmotor import TMotorQDD
     cheetah_control_pos = cheetah_control(
-        type_of_control='torque', use_ros=use_ros)
+        type_of_control='torque', use_ros=use_ros, rate_value= 1000)
 
     # Proportional-Derivative coefficients
     Kp = np.array([[1, 0, 0],
@@ -103,34 +126,7 @@ if __name__ == '__main__':
     start_time = time.time()
     while not rospy.is_shutdown():
         try:
-            if use_ros:
-                if not cheetah_control_pos.joints_positions:
-                    continue
-
-            t = time.time() - start_time
-            Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
-            U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(3*t)], use_input_traj = True)
-            cheetah_control_pos.go_to_zero_all(Kp, Kd)
-            if not use_ros:
-                for motor in motors:
-                    if motor in ['RF_leg']:
-                        # motors[motor][0].set_torque(0)
-                        # motors[motor][1].set_torque(0)
-                        # motors[motor][2].set_torque(0)
-                        motors[motor][0].set_torque(U[motor][0])
-                        motors[motor][1].set_torque(U[motor][1])
-                        motors[motor][2].set_torque(U[motor][2])
-                    else:
-                        motors[motor][0].set_torque(0)
-                        motors[motor][1].set_torque(0)
-                        motors[motor][2].set_torque(0)
-                spine.transfer_and_receive()
-
-            data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
-            
-            if use_ros:
-                cheetah_control_pos.rate.sleep()
+            control_main()
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
