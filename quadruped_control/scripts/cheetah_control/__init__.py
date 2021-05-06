@@ -20,28 +20,28 @@ class cheetah_control():
         self.time_pause_before_control = time_pause_before_control
         time.sleep(self.time_pause_before_control)
 
+        # Declare the joint names of each leg
         self.LB_leg = ['left_back_motor_leg','left_back_leg_hip', 'left_back_hip_calf']
         self.RB_leg = ['right_back_motor_leg','right_back_leg_hip', 'right_back_hip_calf']
         self.LF_leg = ['left_forward_motor_leg','left_forward_leg_hip', 'left_forward_hip_calf']
         self.RF_leg = ['right_forward_motor_leg','right_forward_leg_hip', 'right_forward_hip_calf']
         
-        self.joints = {'FL_hip': ['left_forward_motor_leg'],
-                       'FL_thigh': ['left_forward_leg_hip'],
-                       'FL_calf': ['left_forward_hip_calf'],
+        self.joints = {'FL_hip': self.LF_leg[0],
+                       'FL_thigh': self.LF_leg[1],
+                       'FL_calf': self.LF_leg[2],
 
-                       'FR_hip': ['right_forward_motor_leg'],
-                       'FR_thigh': ['right_forward_leg_hip'],
-                       'FR_calf': ['right_forward_hip_calf'],
+                       'FR_hip': self.RF_leg[0],
+                       'FR_thigh': self.RF_leg[1],
+                       'FR_calf': self.RF_leg[2],
 
-                       'RL_hip': ['left_back_motor_leg'],
-                       'RL_thigh': ['left_back_leg_hip'],
-                       'RL_calf': ['left_back_hip_calf'],
+                       'RL_hip': self.RB_leg[0],
+                       'RL_thigh': self.RB_leg[1],
+                       'RL_calf': self.RB_leg[2],
 
-                       'RR_hip': ['right_back_motor_leg'],
-                       'RR_thigh': ['right_back_leg_hip'],
-                       'RR_calf': ['right_back_hip_calf']
+                       'RR_hip':self.RB_leg[0],
+                       'RR_thigh': self.RB_leg[1],
+                       'RR_calf': self.RB_leg[2]
                        }
-        self.joints_to_corresp = copy.deepcopy(self.joints)
 
         if self.use_ros:
             if type_of_control == 'position':
