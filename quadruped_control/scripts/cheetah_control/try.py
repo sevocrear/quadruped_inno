@@ -1,0 +1,10 @@
+import numpy as np
+Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
+Kps = list(map(lambda x: float(x),Kp_list))
+Kp = np.eye(3)
+np.fill_diagonal(Kp, Kps)
+Kd_list = list(input('Input Kd coeffs with spaces:\n').split())
+Kds = list(map(lambda x: float(x),Kd_list))
+Kd = np.eye(3)
+np.fill_diagonal(Kd, Kds)
+print(Kp, Kd)

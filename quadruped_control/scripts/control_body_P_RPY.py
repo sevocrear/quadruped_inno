@@ -17,6 +17,18 @@ from quadruped_kinematics import quadruped_kinematics
 from log_data import save_data
 import threading
 
+def update_Kp_Kd():
+    global Kp, Kd
+    while True:
+        Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
+        Kps = list(map(lambda x: float(x),Kp_list))
+        Kp = np.eye(3)
+        np.fill_diagonal(Kp, Kps)
+        Kd_list = list(input('Input Kd coeffs with spaces:\n').split())
+        Kds = list(map(lambda x: float(x),Kd_list))
+        Kd = np.eye(3)
+        np.fill_diagonal(Kd, Kds)
+        # print(Kp, Kd)
 
 def control_main():
     global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd
@@ -27,18 +39,19 @@ def control_main():
     t = time.time() - start_time
     Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
     U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4 + 0.025*np.cos(3*t)], use_input_traj = True)
+        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4], use_input_traj = True)
     cheetah_control_pos.go_to_zero_all(Kp, Kd)
     if not use_ros:
         cheetah_control_pos.motor_set_torque(motors['LF_leg'], U['LF_leg'])
-        cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
-        cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
-        cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
+        cheetah_control_pos.motor_set_torque(motors['RF_leg'], U['RF_leg'])
+        cheetah_control_pos.motor_set_torque(motors['LB_leg'], U['LB_leg'])
+        cheetah_control_pos.motor_set_torque(motors['RB_leg'], U['RB_leg'])
         spine.transfer_and_receive()
     # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
     if use_ros:
         cheetah_control_pos.rate.sleep()
-
+    # if t % 2 < 10e-3:
+    #     print(Kp, Kd)
 if __name__ == '__main__':
     use_ros = False
 
@@ -51,10 +64,15 @@ if __name__ == '__main__':
     # Proportional-Derivative coefficients
     Kp = np.array([[1, 0, 0],
                    [0, 1, 0],
-                   [0, 0, 1]])*20
+                   [0, 0, 1]])*1
     Kd = np.array([[1, 0, 0],
                    [0, 1, 0],
-                   [0, 0, 1]])
+                   [0, 0, 1]])*0.1
+
+    input_thread = threading.Thread(target = update_Kp_Kd)
+    input_thread.daemon = True
+    input_thread.start()
+
 
     links_sizes_mm = [162.75, 65, 72.25, 82.25,
                       208, 159, 58.5]  # leg links sizes
@@ -126,7 +144,9 @@ if __name__ == '__main__':
     start_time = time.time()
     while not rospy.is_shutdown():
         try:
+            
             control_main()
+
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
