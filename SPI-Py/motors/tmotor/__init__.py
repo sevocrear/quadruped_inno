@@ -173,8 +173,15 @@ class TMotorQDD:
         self.bytes_to_state(self.reply)
 
 
-    def set_pos(self):
-        pass 
+    def set_pos(self, pos, kp, kd):
+        state_data_dict = self.zero_state
+        state_data_dict['kp'] = kp
+        state_data_dict['kd'] = kd
+        state_data_dict['pos'] = pos
+        # TODO: move this to the separate function (execute command)
+        self.data_out = self.state_to_bytes(state_data_dict)
+        # self.reply = spi.transfer(self.device, data_out)
+        # self.bytes_to_state(self.reply) 
 
     def set_kp(self, kp):
         pass 

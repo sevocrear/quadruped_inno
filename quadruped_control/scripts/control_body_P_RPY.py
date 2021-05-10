@@ -18,8 +18,10 @@ from log_data import save_data
 import threading
 
 def update_Kp_Kd():
-    global Kp, Kd
+    global Kp, Kd, XYZ, RPY
     while True:
+        # 100 50 10 -Kp
+        # 2 2 2 - Kd
         Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
         Kps = list(map(lambda x: float(x),Kp_list))
         Kp = np.eye(3)
@@ -29,9 +31,14 @@ def update_Kp_Kd():
         Kd = np.eye(3)
         np.fill_diagonal(Kd, Kds)
         # print(Kp, Kd)
+        XYZ_list = list(input('Input XYZ des with spaces:\n').split())
+        XYZ = list(map(lambda x: float(x),XYZ_list))
+        
+        RPY_list = list(input('Input RPY des with spaces:\n').split())
+        RPY = list(map(lambda x: float(x),RPY_list))
 
 def control_main():
-    global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd
+    global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd, XYZ, RPY
     if use_ros:
         if not cheetah_control_pos.joints_positions:
             pass
@@ -39,13 +46,19 @@ def control_main():
     t = time.time() - start_time
     Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
     U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=[0, 0, 0.4], use_input_traj = True)
+        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = True)
     cheetah_control_pos.go_to_zero_all(Kp, Kd)
     if not use_ros:
-        cheetah_control_pos.motor_set_torque(motors['LF_leg'], U['LF_leg'])
-        cheetah_control_pos.motor_set_torque(motors['RF_leg'], U['RF_leg'])
-        cheetah_control_pos.motor_set_torque(motors['LB_leg'], U['LB_leg'])
-        cheetah_control_pos.motor_set_torque(motors['RB_leg'], U['RB_leg'])
+        cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [1]*3)
+        cheetah_control_pos.motor_set_pos(motors['RF_leg'], [0,0,0], [50]*3, [1]*3)
+
+        cheetah_control_pos.motor_set_pos(motors['LB_leg'], [0,0,0], [50]*3, [1]*3)
+        cheetah_control_pos.motor_set_pos(motors['RB_leg'], [0,0,0], [50]*3, [1]*3)
+
+        # cheetah_control_pos.motor_set_torque(motors['LF_leg'], [0,0,0])
+        # cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
+        # cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
+        # cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
         spine.transfer_and_receive()
     # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
     if use_ros:
@@ -68,6 +81,9 @@ if __name__ == '__main__':
     Kd = np.array([[1, 0, 0],
                    [0, 1, 0],
                    [0, 0, 1]])*0.1
+
+    XYZ = [0,0,0.425]
+    RPY = [0,0,0]
 
     input_thread = threading.Thread(target = update_Kp_Kd)
     input_thread.daemon = True
@@ -142,6 +158,8 @@ if __name__ == '__main__':
     data_saver = save_data()
 
     start_time = time.time()
+
+
     while not rospy.is_shutdown():
         try:
             

@@ -6,9 +6,10 @@ import numpy as np
 
 
 class cheetah_control():
-    def __init__(self, type_of_control='position', time_pause_before_control=0, rate_value=1000, use_ros = True):
+    def __init__(self, type_of_control='position', time_pause_before_control=0, rate_value=1000, use_ros = True, use_reconfigure = False):
         self.use_ros = use_ros
-        if self.use_ros:
+        self.use_reconfigure = use_reconfigure
+        if self.use_ros or self.use_reconfigure:
             from std_msgs.msg import Float64
             from sensor_msgs.msg import JointState
             from gazebo_msgs.msg import LinkStates
@@ -62,8 +63,6 @@ class cheetah_control():
                 "/quadruped/joint_states", JointState, self.joints_pos_callback)
             self.cheetah_links_sub = rospy.Subscriber(
                 "/gazebo/link_states", LinkStates, self.body_pos_callback)
-            self.reconfigure_sub = rospy.Subscriber(
-                '/dynamic_reconfigure/parameter_updates', Config, self.reconfigure_cb)  # dynamics reconfigure subscriber
 
             self.rate = rospy.Rate(rate_value)
             self.joints_positions = {}
@@ -74,6 +73,9 @@ class cheetah_control():
             self.body_twist_angular = {}
             self.body_twist_linear = {}
 
+        if self.use_ros or self.use_reconfigure:
+            self.reconfigure_sub = rospy.Subscriber(
+                '/dynamic_reconfigure/parameter_updates', Config, self.reconfigure_cb)  # dynamics reconfigure subscriber
             self.config = Config()  # dynamics reconfigure
 
     def move_joint(self, joint, pos):
@@ -156,13 +158,12 @@ class cheetah_control():
         q_goal = np.array([[0],
                            [0],
                            [0]])  # "-" is because the z-axis is inverted for each motor
-
         U = np.dot(Kp, q_goal - q_cur) + np.dot(Kd, q_dot_goal - q_dot_cur)
-
-        if self.use_ros:
-            self.move_joint(motors_names[0], U[0])
-            self.move_joint(motors_names[1], U[1])
-            self.move_joint(motors_names[2], U[2])
+        if self.type_of_control == 'torque':
+            if self.use_ros:
+                self.move_joint(motors_names[0], U[0])
+                self.move_joint(motors_names[1], U[1])
+                self.move_joint(motors_names[2], U[2])
         return [U[0][0], U[1][0], U[2][0]], 1
 
     def go_to_zero_all(self, Kp, Kd):
@@ -253,11 +254,13 @@ class cheetah_control():
                                 [0]], dtype = np.float)
 
         U = np.dot(Kp,q_goal - q_cur) + np.dot(Kd,q_dot_goal - q_dot_cur)
-        
-        if self.use_ros:
-            self.move_joint(motors_names[0], U[0])
-            self.move_joint(motors_names[1], U[1])
-            self.move_joint(motors_names[2], U[2])
+        if self.type_of_control == 'torque':
+            if self.use_ros:
+                self.move_joint(motors_names[0], U[0])
+                self.move_joint(motors_names[1], U[1])
+                self.move_joint(motors_names[2], U[2])
+        else:
+            pass
         return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
 
@@ -276,7 +279,7 @@ class cheetah_control():
                 q_des_dot[leg_name] = q_d_dot
                 q_des[leg_name] = q_d
 
-        if self.use_ros and not use_input_traj:
+        if self.use_ros and not use_input_traj or self.use_reconfigure:
             if not self.check_zero_flag():
                 for i in range(len(self.config.doubles)):
                     if self.config.doubles[i].name == 'x_body_des':
@@ -323,4 +326,8 @@ class cheetah_control():
         motor[1].set_torque(U[1])
         motor[2].set_torque(U[2])
 
+    def motor_set_pos(self,motor, pos, Kp, Kd):
+        motor[0].set_pos(pos[0], Kp[0], Kd[0])
+        motor[1].set_pos(pos[1], Kp[1], Kd[1])
+        motor[2].set_pos(pos[2], Kp[2], Kd[2])
         
