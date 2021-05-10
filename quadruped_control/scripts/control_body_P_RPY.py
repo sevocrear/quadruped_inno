@@ -16,26 +16,127 @@ import sympy as sym
 from quadruped_kinematics import quadruped_kinematics
 from log_data import save_data
 import threading
+import tkinter as tk
 
-def update_Kp_Kd():
-    global Kp, Kd, XYZ, RPY
-    while True:
-        # 100 50 10 -Kp
-        # 2 2 2 - Kd
-        Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
-        Kps = list(map(lambda x: float(x),Kp_list))
-        Kp = np.eye(3)
-        np.fill_diagonal(Kp, Kps)
-        Kd_list = list(input('Input Kd coeffs with spaces:\n').split())
-        Kds = list(map(lambda x: float(x),Kd_list))
-        Kd = np.eye(3)
-        np.fill_diagonal(Kd, Kds)
-        # print(Kp, Kd)
-        XYZ_list = list(input('Input XYZ des with spaces:\n').split())
-        XYZ = list(map(lambda x: float(x),XYZ_list))
+# def update_Kp_Kd():
+#     global Kp, Kd, XYZ, RPY
+#     while True:
+#         # 100 50 10 -Kp
+#         # 2 2 2 - Kd
+#         Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
+#         Kps = list(map(lambda x: float(x),Kp_list))
+#         Kp = np.eye(3)
+#         np.fill_diagonal(Kp, Kps)
+#         Kd_list = list(input('Input Kd coeffs with spaces:\n').split())
+#         Kds = list(map(lambda x: float(x),Kd_list))
+#         Kd = np.eye(3)
+#         np.fill_diagonal(Kd, Kds)
+#         # print(Kp, Kd)
+#         XYZ_list = list(input('Input XYZ des with spaces:\n').split())
+#         XYZ = list(map(lambda x: float(x),XYZ_list))
         
-        RPY_list = list(input('Input RPY des with spaces:\n').split())
-        RPY = list(map(lambda x: float(x),RPY_list))
+#         RPY_list = list(input('Input RPY des with spaces:\n').split())
+#         RPY = list(map(lambda x: float(x),RPY_list))
+
+def tk_reconfigure_xyz_rpy():
+    global Kp, Kd, XYZ, RPY
+    window = tk.Tk()
+    window.title('XYZ RPY CONTROL')
+    window.geometry('1920x1080') 
+    
+    l = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l.pack()
+    
+    l1 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l1.pack()
+
+    l2 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l2.pack()
+
+    l3 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l3.pack()
+
+    l4 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l4.pack()
+
+    l5 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l5.pack()
+
+    l6 = tk.Label(window, bg='white', fg='black', width=20, text='')
+    l6.pack()
+
+    l7 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
+    l7.pack()
+
+    l8 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
+    l8.pack()
+
+    l9 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
+    l9.pack()
+
+    def print_selection_Kp_abad(v):
+        l.config(text='Kp abad =' + v)
+        Kp[0,0] = float(v)
+    
+    def print_selection_Kp_thigh(v):
+        l2.config(text='Kp thigh =' + v)
+        Kp[1,1] = float(v)
+    
+    def print_selection_Kp_knee(v):
+        l4.config(text='Kp knee =' + v)
+        Kp[2,2] = float(v)
+
+    def print_selection_Kd_abad(v):
+        l1.config(text='Kd abad =' + v)
+        Kd[0,0] = float(v)
+    
+    def print_selection_Kd_thigh(v):
+        l3.config(text='Kd thigh =' + v)
+        Kd[1,1] = float(v)
+    
+    def print_selection_Kd_knee(v):
+        l5.config(text='Kd knee =' + v)
+        Kd[2,2] = float(v)
+
+    def print_selection_X(v):
+        l6.config(text='X =' + v)
+        XYZ[0] = float(v)
+    
+    def print_selection_Y(v):
+        l7.config(text='Y =' + v)
+        XYZ[1] = float(v)
+    
+    def print_selection_Z(v):
+        l8.config(text='Z =' + v)
+        XYZ[2] = float(v)
+
+    s = tk.Scale(window, label='Kp abad', from_= 1, to=500, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=100, resolution=0.01, command=print_selection_Kp_abad)
+    s.pack()
+    s1 = tk.Scale(window, label='Kd abad', from_=0, to=50, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=25, resolution=0.01, command=print_selection_Kd_abad)
+    s1.pack()
+
+    s2 = tk.Scale(window, label='Kp tjigh', from_= 1, to=500, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=100, resolution=0.01, command=print_selection_Kp_thigh)
+    s2.pack()
+    s3 = tk.Scale(window, label='Kd thigh', from_=0, to=50, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=25, resolution=0.01, command=print_selection_Kd_thigh)
+    s3.pack()
+
+    s4 = tk.Scale(window, label='Kp knee', from_= 1, to=500, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=100, resolution=0.01, command=print_selection_Kp_knee)
+    s4.pack()
+    s5 = tk.Scale(window, label='Kd knee', from_=0, to=50, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=25, resolution=0.01, command=print_selection_Kd_knee)
+    s5.pack()
+
+    s6 = tk.Scale(window, label='X', from_=0, to=0, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=25, resolution=0.01, command=print_selection_X)
+    s6.pack()
+
+    s7 = tk.Scale(window, label='Y', from_=0, to=0, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=25, resolution=0.01, command=print_selection_Y)
+    s7.pack()
+
+    var_Z = tk.DoubleVar()
+    var_Z.set(0.425)
+    s8 = tk.Scale(window, label='Z', from_=0.425, to=0.1, orient=tk.VERTICAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_Z, variable = var_Z)
+
+    s8.pack()
+    window.mainloop()
 
 def control_main():
     global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd, XYZ, RPY
@@ -60,7 +161,7 @@ def control_main():
         # cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
         # cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
         spine.transfer_and_receive()
-    # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
+    data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
     if use_ros:
         cheetah_control_pos.rate.sleep()
     # if t % 2 < 10e-3:
@@ -85,9 +186,13 @@ if __name__ == '__main__':
     XYZ = [0,0,0.425]
     RPY = [0,0,0]
 
-    input_thread = threading.Thread(target = update_Kp_Kd)
-    input_thread.daemon = True
-    input_thread.start()
+    # input_thread = threading.Thread(target = update_Kp_Kd)
+    # input_thread.daemon = True
+    # input_thread.start()
+
+    rpy_xyz_control_thread = threading.Thread(target = tk_reconfigure_xyz_rpy)
+    rpy_xyz_control_thread.daemon = True
+    rpy_xyz_control_thread.start()
 
 
     links_sizes_mm = [162.75, 65, 72.25, 82.25,
@@ -164,7 +269,6 @@ if __name__ == '__main__':
         try:
             
             control_main()
-
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
