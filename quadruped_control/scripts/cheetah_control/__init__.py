@@ -6,17 +6,15 @@ import numpy as np
 
 
 class cheetah_control():
-    def __init__(self, type_of_control='position', time_pause_before_control=0, rate_value=1000, use_ros = True, use_reconfigure = False):
+    def __init__(self, type_of_control='position', time_pause_before_control=0, rate_value=1000, use_ros = True):
         self.use_ros = use_ros
-        self.use_reconfigure = use_reconfigure
-        if self.use_ros or self.use_reconfigure:
+        if self.use_ros:
             from std_msgs.msg import Float64
             from sensor_msgs.msg import JointState
-            from gazebo_msgs.msg import LinkStates
             import rospy
             from dynamic_reconfigure.msg import Config  # dynamics reconfigure
             rospy.init_node('cheetah_control', anonymous=True)
-
+            from gazebo_msgs.msg import LinkStates
         self.type_of_control = type_of_control
         self.time_pause_before_control = time_pause_before_control
         time.sleep(self.time_pause_before_control)
@@ -73,7 +71,6 @@ class cheetah_control():
             self.body_twist_angular = {}
             self.body_twist_linear = {}
 
-        if self.use_ros or self.use_reconfigure:
             self.reconfigure_sub = rospy.Subscriber(
                 '/dynamic_reconfigure/parameter_updates', Config, self.reconfigure_cb)  # dynamics reconfigure subscriber
             self.config = Config()  # dynamics reconfigure
@@ -264,7 +261,7 @@ class cheetah_control():
         return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
 
-    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.3], use_input_traj = False):
+    def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.425], use_input_traj = False):
         def calc(leg_name, leg_pos, leg):
             P_leg_0 = np.array([[leg_pos[0]],
                                 [leg_pos[1]],
@@ -279,7 +276,7 @@ class cheetah_control():
                 q_des_dot[leg_name] = q_d_dot
                 q_des[leg_name] = q_d
 
-        if self.use_ros and not use_input_traj or self.use_reconfigure:
+        if self.use_ros and not use_input_traj:
             if not self.check_zero_flag():
                 for i in range(len(self.config.doubles)):
                     if self.config.doubles[i].name == 'x_body_des':
@@ -295,7 +292,7 @@ class cheetah_control():
                     elif self.config.doubles[i].name == 'Y_des':
                         yaw = self.config.doubles[i].value
             else:
-                x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
+                x_des, y_des, z_des, roll, pitch, yaw =  0,0,0.425, 0,0,0
         elif use_input_traj:
             x_des, y_des, z_des, roll, pitch, yaw =  xyz[0], xyz[1], xyz[2], rpy[0], rpy[1], rpy[2]
 

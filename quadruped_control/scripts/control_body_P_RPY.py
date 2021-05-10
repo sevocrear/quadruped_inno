@@ -49,11 +49,11 @@ def control_main():
         quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = True)
     cheetah_control_pos.go_to_zero_all(Kp, Kd)
     if not use_ros:
-        cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [1]*3)
-        cheetah_control_pos.motor_set_pos(motors['RF_leg'], [0,0,0], [50]*3, [1]*3)
+        cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+        cheetah_control_pos.motor_set_pos(motors['RF_leg'], q_des['RF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
 
-        cheetah_control_pos.motor_set_pos(motors['LB_leg'], [0,0,0], [50]*3, [1]*3)
-        cheetah_control_pos.motor_set_pos(motors['RB_leg'], [0,0,0], [50]*3, [1]*3)
+        cheetah_control_pos.motor_set_pos(motors['LB_leg'], q_des['LB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+        cheetah_control_pos.motor_set_pos(motors['RB_leg'], q_des['RB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
 
         # cheetah_control_pos.motor_set_torque(motors['LF_leg'], [0,0,0])
         # cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
