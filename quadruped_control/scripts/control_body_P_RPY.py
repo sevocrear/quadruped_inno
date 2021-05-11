@@ -149,7 +149,7 @@ def tk_reconfigure_xyz_rpy(shared_variables):
     s11.pack()
     window.mainloop()
 
-def control_main(shared_variables):
+def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_q_des = None, shared_q_dot_cur = None, shared_q_dot_des = None):
     use_ros = False
 
     if use_ros == False:
@@ -222,9 +222,6 @@ def control_main(shared_variables):
             print('Motors didn\'t initialize. Try again')
             exit()
 
-    # object for storing data
-    data_saver = save_data()
-
     start_time = time.time()
 
     while not rospy.is_shutdown():
@@ -250,23 +247,43 @@ def control_main(shared_variables):
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-                cheetah_control_pos.motor_set_pos(motors['RF_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                cheetah_control_pos.motor_set_pos(motors['RF_leg'], q_des['RF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
 
-                cheetah_control_pos.motor_set_pos(motors['LB_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-                cheetah_control_pos.motor_set_pos(motors['RB_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                cheetah_control_pos.motor_set_pos(motors['LB_leg'], q_des['LB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                cheetah_control_pos.motor_set_pos(motors['RB_leg'], q_des['RB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
                 # cheetah_control_pos.motor_set_torque(motors['LF_leg'], [0,0,0])
                 # cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
                 # cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
                 # cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
                 spine.transfer_and_receive()
-            # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
+
+            # UNCOMMENT IF YOU WANT TO RECORD DATA
+            # shared_t.value = t
+            # shared_q_cur['LF_leg'] = q_cur['LF_leg']
+            # shared_q_cur['RF_leg'] = q_cur['RF_leg']
+            # shared_q_cur['LB_leg'] = q_cur['LB_leg']
+            # shared_q_cur['RB_leg'] = q_cur['RB_leg']
+
+            # shared_q_des['LF_leg'] = q_des['LF_leg']
+            # shared_q_des['RF_leg'] = q_des['RF_leg']
+            # shared_q_des['LB_leg'] = q_des['LB_leg']
+            # shared_q_des['RB_leg'] = q_des['RB_leg']
+
+            # shared_q_dot_cur['LF_leg'] = q_dot_cur['LF_leg']
+            # shared_q_dot_cur['RF_leg'] = q_dot_cur['RF_leg']
+            # shared_q_dot_cur['LB_leg'] = q_dot_cur['LB_leg']
+            # shared_q_dot_cur['RB_leg'] = q_dot_cur['RB_leg']
+
+            # shared_q_dot_des['LF_leg'] = q_dot_des['LF_leg']
+            # shared_q_dot_des['RF_leg'] = q_dot_des['RF_leg']
+            # shared_q_dot_des['LB_leg'] = q_dot_des['LB_leg']
+            # shared_q_dot_des['RB_leg'] = q_dot_des['RB_leg']
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
             # save dataframe to csv file
-            data_saver.save_data_to_csv()
             if not use_ros:
                 for motor in motors:
                     motors[motor][0].disable()
@@ -277,7 +294,6 @@ def control_main(shared_variables):
             else:
                 break
         # except:
-        #     data_saver.save_data_to_csv()
         #     if not use_ros:
         #         for motor in motors:
         #             motors[motor][0].disable()
@@ -286,7 +302,7 @@ def control_main(shared_variables):
         #         spine.transfer_and_receive()
         #     else:
         #         break
-    data_saver.save_data_to_csv()
+    # data_saver.save_data_to_csv()
     if not use_ros:
         for motor in motors:
             motors[motor][0].disable()
@@ -296,15 +312,46 @@ def control_main(shared_variables):
     # if t % 2 < 10e-3:
     #     print(Kp, Kd)
 
+def saving_data(shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des):
+    # # object for storing data
+    data_saver = save_data()
+    while True:
+        try:
+            data_saver.update(shared_q_cur, shared_q_dot_cur, shared_q_des, shared_q_dot_des, shared_t, ['LF_leg', 'RF_leg', 'RB_leg', 'LB_leg'])
+        except KeyboardInterrupt:
+            # save dataframe to csv file
+            data_saver.save_data_to_csv()
+            break
+        # except:
+        #     data_saver.save_data_to_csv()
+        #     if not use_ros:
+        #         for motor in motors:
+        #             motors[motor][0].disable()
+        #             motors[motor][1].disable()
+        #             motors[motor][2].disable()
+        #         spine.transfer_and_receive()
+        #     else:
+        #         break
+
 if __name__ == '__main__':
     manager = Manager()
     shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
-    process_control = Process(target = control_main, args = [shared_variables])
+    # UNCOMMENT BELOW VARIABLES IF YOU WANT TO RECORD
+    # shared_q_cur = manager.dict()
+    # shared_q_des = manager.dict()
+    # shared_q_dot_cur = manager.dict()
+    # shared_q_dot_des = manager.dict()
+    # shared_t = manager.Value('d', 0)
+    process_control = Process(target = control_main, args = [shared_variables,
+                                                            #  shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des #uncomment if you want to record data
+                                                             ])
     process_GUI = Process(target = tk_reconfigure_xyz_rpy, args = [shared_variables])
-
+    # process_save_data = Process(target = saving_data, args = [shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des])
     process_control.start()
     process_GUI.start()
+    # process_save_data.start()
     process_control.join()
     process_GUI.join()
+    # process_save_data.join()
 
 

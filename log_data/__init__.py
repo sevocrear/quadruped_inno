@@ -22,36 +22,35 @@ class save_data():
 
                                         ])
     def update(self, q_cur, q_dot_cur, q_des, q_dot_des, t, motors):
-        # Update dataframe
-        if (t % 0.05) < 10e-4:
-            try:
+        # Update dataframe      
+        try:
                 df_len = len(self.df_data)
                 for motor in motors:
-                    self.df_data.at[df_len,
-                            f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_hip_q_dot_cur'] = q_dot_cur[motor][0][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_thigh_q_dot_cur'] = q_dot_cur[motor][1][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_knee_q_dot_cur'] = q_dot_cur[motor][2][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_hip_q_cur'] = q_cur[motor][0][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_thigh_q_cur'] = q_cur[motor][1][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_knee_q_cur'] = q_cur[motor][2][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_hip_q_dot_cur'] = q_dot_cur[motor][0][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_thigh_q_dot_cur'] = q_dot_cur[motor][1][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_knee_q_dot_cur'] = q_dot_cur[motor][2][0]
 
-                    self.df_data.at[df_len,
-                            f'{motor}_hip_q_des'] = q_des[motor][0][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_thigh_q_des'] = q_des[motor][1][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_knee_q_des'] = q_des[motor][2][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_hip_q_dot_des'] = q_dot_des[motor][0][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_thigh_q_dot_des'] = q_dot_des[motor][1][0]
-                    self.df_data.at[df_len,
-                            f'{motor}_knee_q_dot_des'] = q_dot_des[motor][2][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_hip_q_des'] = q_des[motor][0][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_thigh_q_des'] = q_des[motor][1][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_knee_q_des'] = q_des[motor][2][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_hip_q_dot_des'] = q_dot_des[motor][0][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_thigh_q_dot_des'] = q_dot_des[motor][1][0]
+                        self.df_data.at[df_len,
+                                f'{motor}_knee_q_dot_des'] = q_dot_des[motor][2][0]
                 self.df_data.at[df_len, 'x_cur'] = 0
                 self.df_data.at[df_len, 'y_cur'] = 0
                 self.df_data.at[df_len, 'z_cur'] = 0
@@ -67,8 +66,10 @@ class save_data():
                 self.df_data.at[df_len, 'R_des'] = 0
                 self.df_data.at[df_len, 'P_des'] = 0
                 self.df_data.at[df_len, 'Y_des'] = 0
-                self.df_data.at[df_len, 'time'] = t
-            except IndexError:
+                self.df_data.at[df_len, 'time'] = t.value
+        except IndexError:
+                pass
+        except KeyError:
                 pass
     def save_data_to_csv(self,):
         self.df_data.to_csv(time.strftime(
