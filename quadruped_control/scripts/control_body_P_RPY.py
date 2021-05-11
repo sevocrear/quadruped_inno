@@ -15,31 +15,10 @@ import time
 import sympy as sym
 from quadruped_kinematics import quadruped_kinematics
 from log_data import save_data
-import threading
+from multiprocessing import Process, Manager
 import tkinter as tk
 
-# def update_Kp_Kd():
-#     global Kp, Kd, XYZ, RPY
-#     while True:
-#         # 100 50 10 -Kp
-#         # 2 2 2 - Kd
-#         Kp_list = list(input('Input Kp coeffs with spaces:\n').split())
-#         Kps = list(map(lambda x: float(x),Kp_list))
-#         Kp = np.eye(3)
-#         np.fill_diagonal(Kp, Kps)
-#         Kd_list = list(input('Input Kd coeffs with spaces:\n').split())
-#         Kds = list(map(lambda x: float(x),Kd_list))
-#         Kd = np.eye(3)
-#         np.fill_diagonal(Kd, Kds)
-#         # print(Kp, Kd)
-#         XYZ_list = list(input('Input XYZ des with spaces:\n').split())
-#         XYZ = list(map(lambda x: float(x),XYZ_list))
-        
-#         RPY_list = list(input('Input RPY des with spaces:\n').split())
-#         RPY = list(map(lambda x: float(x),RPY_list))
-
-def tk_reconfigure_xyz_rpy():
-    global Kp, Kd, XYZ, RPY
+def tk_reconfigure_xyz_rpy(shared_variables):
     window = tk.Tk()
     window.title('XYZ RPY CONTROL')
     window.geometry('1920x1080') 
@@ -74,41 +53,59 @@ def tk_reconfigure_xyz_rpy():
     l9 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
     l9.pack()
 
+    l10 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
+    l10.pack()
+
+    l11 = tk.Label(window, bg='yellow', fg='black', width=20, text='')
+    l11.pack()
+
     def print_selection_Kp_abad(v):
         l.config(text='Kp abad =' + v)
-        Kp[0,0] = float(v)
+        shared_variables[0] = float(v)
     
     def print_selection_Kp_thigh(v):
         l2.config(text='Kp thigh =' + v)
-        Kp[1,1] = float(v)
+        shared_variables[1] = float(v)
     
     def print_selection_Kp_knee(v):
         l4.config(text='Kp knee =' + v)
-        Kp[2,2] = float(v)
+        shared_variables[2] = float(v)
 
     def print_selection_Kd_abad(v):
         l1.config(text='Kd abad =' + v)
-        Kd[0,0] = float(v)
+        shared_variables[3] = float(v)
     
     def print_selection_Kd_thigh(v):
         l3.config(text='Kd thigh =' + v)
-        Kd[1,1] = float(v)
+        shared_variables[4] = float(v)
     
     def print_selection_Kd_knee(v):
         l5.config(text='Kd knee =' + v)
-        Kd[2,2] = float(v)
+        shared_variables[5] = float(v)
 
     def print_selection_X(v):
         l6.config(text='X =' + v)
-        XYZ[0] = float(v)
+        shared_variables[6] = float(v)
     
     def print_selection_Y(v):
         l7.config(text='Y =' + v)
-        XYZ[1] = float(v)
+        shared_variables[7] = float(v)
     
     def print_selection_Z(v):
         l8.config(text='Z =' + v)
-        XYZ[2] = float(v)
+        shared_variables[8] = float(v)
+
+    def print_selection_roll(v):
+        l9.config(text='roll =' + v)
+        shared_variables[9] = float(v)
+
+    def print_selection_pitch(v):
+        l10.config(text='pitch =' + v)
+        shared_variables[10] = float(v)
+    
+    def print_selection_yaw(v):
+        l11.config(text='yaw =' + v)
+        shared_variables[11] = float(v)
 
     s = tk.Scale(window, label='Kp abad', from_= 1, to=500, orient=tk.HORIZONTAL, length=500, showvalue=0,tickinterval=100, resolution=0.01, command=print_selection_Kp_abad)
     s.pack()
@@ -133,40 +130,26 @@ def tk_reconfigure_xyz_rpy():
 
     var_Z = tk.DoubleVar()
     var_Z.set(0.425)
-    s8 = tk.Scale(window, label='Z', from_=0.425, to=0.1, orient=tk.VERTICAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_Z, variable = var_Z)
-
+    s8 = tk.Scale(window, label='Z', from_=0.1, to=0.425, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_Z, variable = var_Z)
     s8.pack()
+
+    var_R = tk.DoubleVar()
+    var_R.set(0.0)
+    s9 = tk.Scale(window, label='R', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_roll, variable = var_R)
+    s9.pack()
+
+    var_P = tk.DoubleVar()
+    var_P.set(0.0)
+    s10 = tk.Scale(window, label='P', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_pitch, variable = var_P)
+    s10.pack()
+
+    var_Y = tk.DoubleVar()
+    var_Y.set(0.0)
+    s11 = tk.Scale(window, label='Y', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_yaw, variable = var_Y)
+    s11.pack()
     window.mainloop()
 
-def control_main():
-    global U, flag, q_cur, q_dot_cur, q_des, q_dot_des, Kp, Kd, XYZ, RPY
-    if use_ros:
-        if not cheetah_control_pos.joints_positions:
-            pass
-    st = time.time()
-    t = time.time() - start_time
-    Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd)
-    U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-        quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = True)
-    cheetah_control_pos.go_to_zero_all(Kp, Kd)
-    if not use_ros:
-        cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-        cheetah_control_pos.motor_set_pos(motors['RF_leg'], q_des['RF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-
-        cheetah_control_pos.motor_set_pos(motors['LB_leg'], q_des['LB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-        cheetah_control_pos.motor_set_pos(motors['RB_leg'], q_des['RB_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
-
-        # cheetah_control_pos.motor_set_torque(motors['LF_leg'], [0,0,0])
-        # cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
-        # cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
-        # cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
-        spine.transfer_and_receive()
-    data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
-    if use_ros:
-        cheetah_control_pos.rate.sleep()
-    # if t % 2 < 10e-3:
-    #     print(Kp, Kd)
-if __name__ == '__main__':
+def control_main(shared_variables):
     use_ros = False
 
     if use_ros == False:
@@ -174,26 +157,6 @@ if __name__ == '__main__':
         from motors.tmotor import TMotorQDD
     cheetah_control_pos = cheetah_control(
         type_of_control='torque', use_ros=use_ros, rate_value= 1000)
-
-    # Proportional-Derivative coefficients
-    Kp = np.array([[1, 0, 0],
-                   [0, 1, 0],
-                   [0, 0, 1]])*1
-    Kd = np.array([[1, 0, 0],
-                   [0, 1, 0],
-                   [0, 0, 1]])*0.1
-
-    XYZ = [0,0,0.425]
-    RPY = [0,0,0]
-
-    # input_thread = threading.Thread(target = update_Kp_Kd)
-    # input_thread.daemon = True
-    # input_thread.start()
-
-    rpy_xyz_control_thread = threading.Thread(target = tk_reconfigure_xyz_rpy)
-    rpy_xyz_control_thread.daemon = True
-    rpy_xyz_control_thread.start()
-
 
     links_sizes_mm = [162.75, 65, 72.25, 82.25,
                       208, 159, 58.5]  # leg links sizes
@@ -264,11 +227,41 @@ if __name__ == '__main__':
 
     start_time = time.time()
 
-
     while not rospy.is_shutdown():
         try:
             
-            control_main()
+            if use_ros:
+                if not cheetah_control_pos.joints_positions:
+                    pass
+            # Proportional-Derivative coefficients
+            Kp = np.array([[shared_variables[0], 0, 0],
+                        [0, shared_variables[1], 0],
+                        [0, 0, shared_variables[2]]])
+            Kd = np.array([[shared_variables[3], 0, 0],
+                        [0, shared_variables[4], 0],
+                        [0, 0, shared_variables[5]]])
+            XYZ = [shared_variables[6],shared_variables[7],shared_variables[8]]
+            RPY = [shared_variables[9],shared_variables[10],shared_variables[11]]
+            st = time.time()
+            t = time.time() - start_time
+            Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd) # for ros
+            U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = True)
+            cheetah_control_pos.go_to_zero_all(Kp, Kd)
+            if not use_ros:
+                cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                cheetah_control_pos.motor_set_pos(motors['RF_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+
+                cheetah_control_pos.motor_set_pos(motors['LB_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                cheetah_control_pos.motor_set_pos(motors['RB_leg'], [0,0,0], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
+                # cheetah_control_pos.motor_set_torque(motors['LF_leg'], [0,0,0])
+                # cheetah_control_pos.motor_set_torque(motors['RF_leg'], [0,0,0])
+                # cheetah_control_pos.motor_set_torque(motors['LB_leg'], [0,0,0])
+                # cheetah_control_pos.motor_set_torque(motors['RB_leg'], [0,0,0])
+                spine.transfer_and_receive()
+            # data_saver.update(q_cur, q_dot_cur, q_des, q_dot_des, t, motors)
+            if use_ros:
+                cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
             pass
         except KeyboardInterrupt:
@@ -300,3 +293,18 @@ if __name__ == '__main__':
             motors[motor][1].disable()
             motors[motor][2].disable()
         spine.transfer_and_receive()
+    # if t % 2 < 10e-3:
+    #     print(Kp, Kd)
+
+if __name__ == '__main__':
+    manager = Manager()
+    shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
+    process_control = Process(target = control_main, args = [shared_variables])
+    process_GUI = Process(target = tk_reconfigure_xyz_rpy, args = [shared_variables])
+
+    process_control.start()
+    process_GUI.start()
+    process_control.join()
+    process_GUI.join()
+
+

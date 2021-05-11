@@ -1,23 +1,15 @@
-import tkinter as tk
- 
-window = tk.Tk()
-window.title('XYZ RPY CONTROL')
-window.geometry('500x300') 
- 
-l = tk.Label(window, bg='white', fg='black', width=20, text='empty')
-l.pack()
- 
-l1 = tk.Label(window, bg='white', fg='black', width=20, text='empty')
-l1.pack()
+from multiprocessing import Process, Manager
+manager = Manager()
+shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425 ])
 
-def print_selection_X(v):
-    l.config(text='X =' + v)
-def print_selection_Y(v):
-    l1.config(text='Y =' + v)
 
-s = tk.Scale(window, label='try me', from_=0, to=10, orient=tk.HORIZONTAL, length=200, showvalue=0,tickinterval=2, resolution=0.01, command=print_selection_X)
-s.pack()
- 
-s1 = tk.Scale(window, label='try me', from_=0, to=10, orient=tk.HORIZONTAL, length=200, showvalue=0,tickinterval=2, resolution=0.01, command=print_selection_Y)
-s1.pack()
-window.mainloop()
+if __name__ == "__main__":
+    # construct a different process for each function
+    max_size = 1000000000
+    processes = [Process(target=add, args=(range(1, max_size), range(1, max_size))),
+                 Process(target=sub, args=(range(1, max_size), range(1, max_size))),
+                 Process(target=mult, args=(range(1, max_size), range(1, max_size)))]
+
+    # kick them off 
+    for process in processes:
+        process.start()
