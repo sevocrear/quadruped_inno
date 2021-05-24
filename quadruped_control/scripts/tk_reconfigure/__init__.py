@@ -117,16 +117,16 @@ def tk_reconfigure_xyz_rpy(shared_variables):
 
     var_R = tk.DoubleVar()
     var_R.set(0.0)
-    s9 = tk.Scale(window, label='R', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_roll, variable = var_R)
+    s9 = tk.Scale(window, label='R', from_=-0.3, to=0.3, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_roll, variable = var_R)
     s9.pack()
 
     var_P = tk.DoubleVar()
     var_P.set(0.0)
-    s10 = tk.Scale(window, label='P', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_pitch, variable = var_P)
+    s10 = tk.Scale(window, label='P', from_=-0.3, to=0.3, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_pitch, variable = var_P)
     s10.pack()
 
     var_Y = tk.DoubleVar()
     var_Y.set(0.0)
-    s11 = tk.Scale(window, label='Y', from_=-0.15, to=0.15, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_yaw, variable = var_Y)
+    s11 = tk.Scale(window, label='Y', from_=-0.3, to=0.3, orient=tk.HORIZONTAL, length=300, showvalue=0,tickinterval=0.1, resolution=0.001, command=print_selection_yaw, variable = var_Y)
     s11.pack()
     window.mainloop()

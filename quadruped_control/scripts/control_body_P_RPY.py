@@ -205,8 +205,8 @@ def saving_data(shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q
 if __name__ == '__main__':
 
 
-    use_ros = False
-    use_input_traj = True # control from tk GUI
+    use_ros = True # Simulation
+    use_input_traj = False # control from tk GUI
 
     manager = Manager()
     shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
