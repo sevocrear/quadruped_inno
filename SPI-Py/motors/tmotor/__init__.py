@@ -130,9 +130,6 @@ class TMotorQDD:
 
 
     def set_zero(self):
-        print(f'You are going to assign a new zero for motor with ID {self.motor_id}, press "Y" to continue...\n')
-        # user_input = input()
-        # if user_input == 'Y' or user_input == 'y':
         self.data_out = [self.motor_id] + self.commands['set_zero']
         print('New encoder zero is setted') 
         # else:

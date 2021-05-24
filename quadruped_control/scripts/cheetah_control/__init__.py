@@ -257,6 +257,7 @@ class cheetah_control():
                 self.move_joint(motors_names[1], U[1])
                 self.move_joint(motors_names[2], U[2])
         else:
+            # for position... to update
             pass
         return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
