@@ -12,44 +12,26 @@ links_sizes_mm = [162.75, 65, 72.25, 82.25,
 quad_kin = quadruped_kinematics(
     [link_size / 1000 for link_size in links_sizes_mm])
 
-pos_des = [0.14725, -0.15,   -0.25]
-
-q_des = quad_kin.leg_ik(base = quad_kin.base_LF, pos = pos_des)
-
+q_des = [0.3,0.2,0.2]
+q_des = [0.3,0.2,-0.2]
+q_des = [0.3,-0.2,0.2]
+q_des = [0.3,-0.2,-0.2]
+q_des = [-0.3,0.2,0.2]
+q_des = [-0.3,0.2,-0.2]
+q_des = [-0.3,-0.2,0.2]
+q_des = [-0.3,-0.2,-0.2]
 p_m, p_h, p_c, p_f = quad_kin.lf_leg_fk(q_des,base = quad_kin.base_LF)
+q_ik = quad_kin.leg_ik(base = quad_kin.base_LF, pos = p_f)
+print(q_des,'\n',list(map(lambda x: round(x,2),q_ik)))
 
-print(p_f,'\n', pos_des)
-
-pos_des = [-0.14725, 0.15,   -0.25 ] #
-q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv = 1)
-p_m, p_h, p_c, p_f = quad_kin.lf_leg_fk(q_des,base = quad_kin.base_RB)
-
-print(p_f,'\n', pos_des)
-
-pos_des = [-0.14725, -0.15,   -0.25 ]
-
-q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1 , flag_inv = 1)
-p_m, p_h, p_c, p_f = quad_kin.lb_leg_fk(q_des,base = quad_kin.base_RF)
-
-print(p_f,'\n', pos_des)
-
-pos_des = [0.14725, 0.15,   -0.25 ] #
-q_des = quad_kin.leg_ik(base = quad_kin.base_LB, pos = pos_des, flag = 1)
 p_m, p_h, p_c, p_f = quad_kin.lb_leg_fk(q_des,base = quad_kin.base_LB)
+q_ik = quad_kin.leg_ik(base = quad_kin.base_LB, pos = p_f, flag_lf=0)
+print(q_des,'\n',list(map(lambda x: round(x,2),q_ik)))
 
-print(p_f, '\n',pos_des)
+p_m, p_h, p_c, p_f = quad_kin.lf_leg_fk(q_des,base = quad_kin.base_RB)
+q_ik = quad_kin.leg_ik(base = quad_kin.base_RB, pos = p_f)
+print(q_des,'\n',list(map(lambda x: round(x,2),q_ik)))
 
-
-        #     q_dot_goal = 0
-        # elif leg_name == "LB_leg":
-        #     q_des = quad_kin.leg_ik(base = quad_kin.base_LB, pos = pos_des, flag = 1)
-            
-        #     q_dot_goal = 0
-        # elif leg_name == "RB_leg":
-        #     q_des = quad_kin.leg_ik(base = quad_kin.base_RB, pos = pos_des, flag_inv= 1)
-            
-        #     q_dot_goal = 0
-        # elif leg_name == "RF_leg":
-        #     q_des = quad_kin.leg_ik(base = quad_kin.base_RF, pos = pos_des, flag = 1, flag_inv = 1)
-
-        #     q_dot_goal = 0 
+p_m, p_h, p_c, p_f = quad_kin.lb_leg_fk(q_des,base = quad_kin.base_RF)
+q_ik = quad_kin.leg_ik(base = quad_kin.base_RF, pos = p_f)
+print(q_des,'\n',list(map(lambda x: round(x,2),q_ik)))
