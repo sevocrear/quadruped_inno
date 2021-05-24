@@ -25,23 +25,23 @@ class cheetah_control():
         self.LF_leg = ['left_forward_motor_leg','left_forward_leg_hip', 'left_forward_hip_calf']
         self.RF_leg = ['right_forward_motor_leg','right_forward_leg_hip', 'right_forward_hip_calf']
         
-        self.joints = {'FL_hip': self.LF_leg[0],
-                       'FL_thigh': self.LF_leg[1],
-                       'FL_calf': self.LF_leg[2],
+        self.joints = {'FL_hip': [self.LF_leg[0]],
+                       'FL_thigh': [self.LF_leg[1]],
+                       'FL_calf': [self.LF_leg[2]],
 
-                       'FR_hip': self.RF_leg[0],
-                       'FR_thigh': self.RF_leg[1],
-                       'FR_calf': self.RF_leg[2],
+                       'FR_hip': [self.RF_leg[0]],
+                       'FR_thigh': [self.RF_leg[1]],
+                       'FR_calf': [self.RF_leg[2]],
 
-                       'RL_hip': self.RB_leg[0],
-                       'RL_thigh': self.RB_leg[1],
-                       'RL_calf': self.RB_leg[2],
+                       'RL_hip': [self.LB_leg[0]],
+                       'RL_thigh': [self.LB_leg[1]],
+                       'RL_calf': [self.LB_leg[2]],
 
-                       'RR_hip':self.RB_leg[0],
-                       'RR_thigh': self.RB_leg[1],
-                       'RR_calf': self.RB_leg[2]
+                       'RR_hip':[self.RB_leg[0]],
+                       'RR_thigh': [self.RB_leg[1]],
+                       'RR_calf': [self.RB_leg[2]]
                        }
-
+        self.joints_to_corresp = copy.deepcopy(self.joints)
         if self.use_ros:
             if type_of_control == 'position':
                 self.controllers = list(
@@ -256,13 +256,19 @@ class cheetah_control():
                 self.move_joint(motors_names[0], U[0])
                 self.move_joint(motors_names[1], U[1])
                 self.move_joint(motors_names[2], U[2])
-        else:
+        elif self.type_of_control == 'position':
+            self.move_joint(motors_names[0], q_goal[0])
+            self.move_joint(motors_names[1], q_goal[1])
+            self.move_joint(motors_names[2], q_goal[2])
             # for position... to update
             pass
         return [U[0][0], U[1][0], U[2][0]], 1, q_cur, q_goal, q_dot_cur, q_dot_goal
         
 
     def go_to_desired_RPY_of_base(self, quad_kin, LF_leg_pos, RF_leg_pos, LB_leg_pos, RB_leg_pos, Kd, Kp, tmotors = {}, rpy = [0,0,0], xyz = [0,0,0.425], use_input_traj = False):
+        '''
+        **_leg_pos - wrt the world
+        '''
         def calc(leg_name, leg_pos, leg):
             P_leg_0 = np.array([[leg_pos[0]],
                                 [leg_pos[1]],
@@ -305,7 +311,6 @@ class cheetah_control():
         T_B_0_inv[0:3,0:3] = np.transpose(R)
         T_B_0_inv[0:3,3] = -np.dot(np.transpose(R),d).reshape(3,)
         T_B_0_inv[3,3] = 1
-
         U_sum = {'LF_leg':[], 'RF_leg':[], 'LB_leg':[], 'RB_leg': []}
         q_cur = copy.deepcopy(U_sum)
         q_cur_dot = copy.deepcopy(U_sum)

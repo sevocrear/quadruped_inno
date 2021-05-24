@@ -111,28 +111,24 @@ class quadruped_kinematics():
             base_inv[3,3] = 1
             pos = np.dot(base_inv,np.array([pos[0], pos[1], pos[2],1]).reshape(4,1))
             x,y,z = pos[0,0], pos[1,0], pos[2,0]
-            r = np.sqrt((x)**2+ (y)**2)
+
+            r = np.sqrt(x**2+ y**2)
             phi = np.arctan2(y,-x)
             alpha = np.arctan2(np.sqrt(r**2-self.links_size[3]**2), self.links_size[3])
 
             if flag:
-                theta_1 = +phi+alpha - np.pi
+                theta_1 = phi + alpha - np.pi
             else:
-                theta_1 = -phi+alpha - np.pi
+                theta_1 = phi - alpha - np.pi
             r_square = r**2 - self.links_size[3]**2
 
             s =   -self.links_size[2] + z
 
             D = (r_square + s**2 - self.links_size[4]**2 - (self.links_size[5]+ self.links_size[6])**2)/(2*self.links_size[4]*(self.links_size[5]+self.links_size[6]))
             
-            if flag_inv:
-                theta_3 = -np.arccos(round(D,6))
-            else:
-                theta_3 = np.arccos(round(D,6))
-
-
+            theta_3 = np.arccos(round(D,6))
             theta_2 = -np.pi + (np.arctan2(np.sqrt(r_square), s) + np.arctan2(self.links_size[4] + (self.links_size[5] + self.links_size[6])*np.cos(theta_3), (self.links_size[5]+self.links_size[6])*np.sin(theta_3)))
-            
+        
             if theta_1 > np.pi:
                 theta_1 = theta_1 - 2*np.pi
 
@@ -150,6 +146,10 @@ class quadruped_kinematics():
 
             if theta_3 < -np.pi:
                 theta_3 = theta_3 + 2*np.pi
+            
+            if flag_inv:
+                theta_2 = -theta_2
+                theta_3 = -theta_3
             return [theta_1, theta_2, theta_3]
         except RuntimeWarning:
             print('inapropriate pos! Not possible. Going to the zero pos')

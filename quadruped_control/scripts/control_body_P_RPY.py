@@ -18,15 +18,16 @@ from log_data import save_data
 from multiprocessing import Process, Manager
 from tk_reconfigure import tk_reconfigure_xyz_rpy
 
-def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_q_des = None, shared_q_dot_cur = None, shared_q_dot_des = None):
-    use_ros = False
+def control_main(shared_variables, use_ros, shared_t = None, shared_q_cur = None, shared_q_des = None, shared_q_dot_cur = None, shared_q_dot_des = None):
 
     if use_ros == False:
         from SPIne import SPIne
         from motors.tmotor import TMotorQDD
+        os.system("sudo chmod a+rw /dev/spidev1.0")
+        os.system("sudo chmod a+rw /dev/spidev1.1")
         
     cheetah_control_pos = cheetah_control(
-        type_of_control='torque', use_ros=use_ros, rate_value= 1000)
+        type_of_control='position', use_ros=use_ros, rate_value= 1000)
 
     links_sizes_mm = [162.75, 65, 72.25, 82.25,
                       208, 159, 58.5]  # leg links sizes
@@ -35,13 +36,16 @@ def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_
 
     # initialize feet poses wrt the world
     LF_foot_pos = [quad_kin.links_size[1] + quad_kin.links_size[3], -
-                   (quad_kin.links_size[0] + quad_kin.links_size[3]), 0]
+                   (quad_kin.links_size[0] + quad_kin.links_size[2]), 0]
+
     RF_foot_pos = [-(quad_kin.links_size[1] + quad_kin.links_size[3]), -
-                   (quad_kin.links_size[0] + quad_kin.links_size[3]), 0]
+                   (quad_kin.links_size[0] + quad_kin.links_size[2]), 0]
+
     LB_foot_pos = [(quad_kin.links_size[1] + quad_kin.links_size[3]),
-                   (quad_kin.links_size[0] + quad_kin.links_size[3]), 0]
+                   (quad_kin.links_size[0] + quad_kin.links_size[2]), 0]
+
     RB_foot_pos = [-(quad_kin.links_size[1] + quad_kin.links_size[3]),
-                   (quad_kin.links_size[0] + quad_kin.links_size[3]), 0]
+                   (quad_kin.links_size[0] + quad_kin.links_size[2]), 0]
 
     # initialize motors
     motors = {'LF_leg': [], 'RF_leg': [], 'LB_leg': [], 'RB_leg': []}
@@ -94,12 +98,14 @@ def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_
 
     start_time = time.time()
 
+    Kp, Kd = np.eye(3), np.eye(3)*0.1
+
     while not rospy.is_shutdown():
         try:
             
             if use_ros:
                 if not cheetah_control_pos.joints_positions:
-                    pass
+                    continue
             # Proportional-Derivative coefficients
             if not use_ros:
                 Kp = np.array([[shared_variables[0], 0, 0],
@@ -111,13 +117,12 @@ def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_
                 XYZ = [shared_variables[6],shared_variables[7],shared_variables[8]]
                 RPY = [shared_variables[9],shared_variables[10],shared_variables[11]]
             else:
-                Kp = np.eye(3)
-                Kd = np.eye(3)*0.1
-                
+                Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd) # for ros
+                XYZ = [0,0,0.4]
+                RPY = [0,0,0]
             t = time.time() - start_time
-            Kp, Kd = cheetah_control_pos.update_PD(Kp, Kd) # for ros
             U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = True)
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = False)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
@@ -167,15 +172,15 @@ def control_main(shared_variables, shared_t = None, shared_q_cur = None, shared_
                 break
             else:
                 break
-        except:
-            if not use_ros:
-                for motor in motors:
-                    motors[motor][0].disable()
-                    motors[motor][1].disable()
-                    motors[motor][2].disable()
-                spine.transfer_and_receive()
-            else:
-                break
+        # except:
+        #     if not use_ros:
+        #         for motor in motors:
+        #             motors[motor][0].disable()
+        #             motors[motor][1].disable()
+        #             motors[motor][2].disable()
+        #         spine.transfer_and_receive()
+        #     else:
+        #         break
     if not use_ros:
         for motor in motors:
             motors[motor][0].disable()
@@ -198,8 +203,10 @@ def saving_data(shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q
             break
 
 if __name__ == '__main__':
-    os.system("sudo chmod a+rw /dev/spidev1.0")
-    os.system("sudo chmod a+rw /dev/spidev1.1")
+
+
+    use_ros = True
+
     manager = Manager()
     shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
     # UNCOMMENT BELOW VARIABLES IF YOU WANT TO RECORD
@@ -208,16 +215,19 @@ if __name__ == '__main__':
     # shared_q_dot_cur = manager.dict()
     # shared_q_dot_des = manager.dict()
     # shared_t = manager.Value('d', 0)
-    process_control = Process(target = control_main, args = [shared_variables,
+    process_control = Process(target = control_main, args = [shared_variables, use_ros,
                                                             #  shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des #uncomment if you want to record data
                                                              ])
+                                                            
     process_GUI = Process(target = tk_reconfigure_xyz_rpy, args = [shared_variables])
     # process_save_data = Process(target = saving_data, args = [shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des])
     process_control.start()
-    process_GUI.start()
+    if not use_ros:
+        process_GUI.start()
     # process_save_data.start()
     process_control.join()
-    process_GUI.join()
+    if not use_ros:
+        process_GUI.join()
     # process_save_data.join()
 
 

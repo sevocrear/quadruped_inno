@@ -1,12 +1,9 @@
 <launch>
-  <arg
-    name="model" />
+  <arg name="model" default="$(find quadruped_robot)/urdf/quadruped_robot.urdf"/>
   <arg
     name="gui"
     default="False" />
-  <param
-    name="robot_description"
-    textfile="$(find quadruped_robot)/urdf/quadruped_robot.urdf" />
+  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
   <param
     name="use_gui"
     value="$(arg gui)" />
@@ -17,7 +14,7 @@
   <node
     name="robot_state_publisher"
     pkg="robot_state_publisher"
-    type="state_publisher" />
+    type="robot_state_publisher" />
   <node
     name="rviz"
     pkg="rviz"
