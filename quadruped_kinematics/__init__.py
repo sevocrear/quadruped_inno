@@ -120,6 +120,7 @@ class quadruped_kinematics():
                 theta_1 = phi + alpha - np.pi
             else:
                 theta_1 = phi - alpha - np.pi
+                
             r_square = r**2 - self.links_size[3]**2
 
             s =   -self.links_size[2] + z
