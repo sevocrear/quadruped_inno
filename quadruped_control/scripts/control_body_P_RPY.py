@@ -18,7 +18,7 @@ from log_data import save_data
 from multiprocessing import Process, Manager
 from tk_reconfigure import tk_reconfigure_xyz_rpy
 
-def control_main(shared_variables, use_ros, shared_t = None, shared_q_cur = None, shared_q_des = None, shared_q_dot_cur = None, shared_q_dot_des = None):
+def control_main(shared_variables, use_ros, use_input_traj, shared_t = None, shared_q_cur = None, shared_q_des = None, shared_q_dot_cur = None, shared_q_dot_des = None):
 
     if use_ros == False:
         from SPIne import SPIne
@@ -122,7 +122,7 @@ def control_main(shared_variables, use_ros, shared_t = None, shared_q_cur = None
                 RPY = [0,0,0]
             t = time.time() - start_time
             U, flag, q_cur, q_dot_cur, q_des, q_dot_des = cheetah_control_pos.go_to_desired_RPY_of_base(
-                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = False)
+                quad_kin, LF_foot_pos, RF_foot_pos, LB_foot_pos, RB_foot_pos, Kd, Kp, tmotors=motors, xyz=XYZ, rpy = RPY, use_input_traj = use_input_traj)
             cheetah_control_pos.go_to_zero_all(Kp, Kd)
             if not use_ros:
                 cheetah_control_pos.motor_set_pos(motors['LF_leg'], q_des['LF_leg'], [Kp[0,0],Kp[1,1],Kp[2,2]], [Kd[0,0],Kd[1,1],Kd[2,2]])
@@ -205,7 +205,8 @@ def saving_data(shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q
 if __name__ == '__main__':
 
 
-    use_ros = True
+    use_ros = False
+    use_input_traj = True # control from tk GUI
 
     manager = Manager()
     shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
@@ -215,7 +216,7 @@ if __name__ == '__main__':
     # shared_q_dot_cur = manager.dict()
     # shared_q_dot_des = manager.dict()
     # shared_t = manager.Value('d', 0)
-    process_control = Process(target = control_main, args = [shared_variables, use_ros,
+    process_control = Process(target = control_main, args = [shared_variables, use_ros,use_input_traj,
                                                             #  shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des #uncomment if you want to record data
                                                              ])
                                                             
