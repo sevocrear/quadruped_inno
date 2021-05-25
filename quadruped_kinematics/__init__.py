@@ -51,7 +51,6 @@ class quadruped_kinematics():
         method for solving inverse kinematics of each quadruped leg
         '''
         try:
-            print(pos)
             base_inv = np.zeros((4, 4))
             base_inv[0:3, 0:3] = base[0:3, 0:3].T
             base_inv[0:3, 3] = -np.dot(base[0:3, 0:3].T, base[0:3, 3])
