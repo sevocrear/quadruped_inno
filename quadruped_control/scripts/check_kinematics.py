@@ -12,6 +12,7 @@ from quadruped_kinematics import quadruped_kinematics
 
 class kinematics_test(unittest.TestCase):
     def test_FK(self):
+        print('Checking FK solutions for all legs...')
         links_sizes_mm = [162.75, 65, 72.25, 82.25,
                       208, 159, 58.5]  # leg links sizes
         link_sizes = [link_size / 1000 for link_size in links_sizes_mm]
@@ -81,6 +82,7 @@ class kinematics_test(unittest.TestCase):
         self.assertAlmostEqual(z,z_des, places = 5)
 
     def test_IK(self):
+        print('Checking IK solutions for all legs...')
         links_sizes_mm = [162.75, 65, 72.25, 82.25,
                       208, 159, 58.5]  # leg links sizes
         link_sizes = [link_size / 1000 for link_size in links_sizes_mm]

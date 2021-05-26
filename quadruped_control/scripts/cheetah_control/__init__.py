@@ -242,9 +242,9 @@ class cheetah_control():
         else: print('wrong input to traj')
         
 
-        q_goal =  np.array([[q_des[0]],
+        q_goal =  -np.array([[q_des[0]],
                             [q_des[1]],
-                            [q_des[2]]]) 
+                            [q_des[2]]])  # minus here because it's runned on the real robot which has opposite direction z-axis
         
         q_dot_goal = np.array([[0],
                                 [0],
