@@ -3,7 +3,7 @@ Simulation of quadruped for Thesis Project
 
 
 <!-- ![Quadruped](quadruped_robot/config/quadruped.png = 250x) -->
-<img src="quadruped_robot/config/quadruped.png" alt="Quadruped" width="500"/>
+<img src="quadruped_robot/config/InnoDog.png" alt="Quadruped" width="500"/>
 
 # Kinematics Scheme
 
@@ -21,7 +21,7 @@ roslaunch quadruped_control robot_torque_control.launch
 But make sure that flag "use_ros" in file /quadruped_control/scripts/control_body_P_RPY.py is equal to "True"
 
 
-If you want to use the real hardware:
+If you want to use the real hardware with TMOTORS:
 
 ```bash
 python3 control_body_P_RPY.py
