@@ -12,12 +12,12 @@
 
     <!-- Used for fixing robot to Gazebo 'base_link' -->
 
-  <link name="world"/>
+  <!-- <link name="world"/>
   <joint name="world_body" type="floating">
     <parent link="world"/>
     <child link="body"/>
     <origin rpy="0 0 0" xyz="0 0 0.45"/>
-  </joint>
+  </joint> -->
 
   <link
     name="body">
@@ -26,14 +26,14 @@
         xyz="0.00595967385992909 0.00347011518192815 0.000128724144476447"
         rpy="0 0 0" />
       <mass
-        value="0.614376972447432" />
+        value="0.6" />
       <inertia
-        ixx="0.00336941139420018"
-        ixy="-4.8575988980422E-08"
-        ixz="-1.3625652345197E-09"
-        iyy="0.000289319263053727"
-        iyz="-7.81791291078526E-08"
-        izz="0.00317576464583023" />
+        ixx="0.0"
+        ixy="0.0"
+        ixz="0.0"
+        iyy="0.0"
+        iyz="0.0"
+        izz="0.0" />
     </inertial>
     <visual>
       <origin

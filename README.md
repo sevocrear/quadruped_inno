@@ -32,3 +32,7 @@ But make sure that flag "use_ros" in file /quadruped_control/scripts/control_bod
 Also, after execution, the program will create csv file which you can analyze with help of cvs_analysis.py file (lies in /quadruped_control/scripts/)
 
 ...update...
+
+\<TO DO>
+* identificate robot parameters (Is, masses, etc)
+* MPC for walking
