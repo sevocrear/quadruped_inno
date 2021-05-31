@@ -16,7 +16,7 @@ Simulation of quadruped for Thesis Project
 If you want to use ROS simulation:
 
 ```bash
-roslaunch quadruped_control robot_torque_control.launch
+roslaunch quadruped_control robot_torque(pos)_control.launch
 ```
 But make sure that flag "use_ros" in file /quadruped_control/scripts/control_body_P_RPY.py is equal to "True"
 
