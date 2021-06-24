@@ -112,12 +112,12 @@
     <material>Gazebo/Red</material>
   </gazebo>
   <!-- FL leg -->
-  <gazebo reference="FL_hip">
+  <gazebo reference="left_forward_hip">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/DarkGrey</material>
   </gazebo>
-  <gazebo reference="FL_thigh">
+  <gazebo reference="left_forward_thigh">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
@@ -125,12 +125,12 @@
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
-  <gazebo reference="FL_calf">
+  <gazebo reference="left_forward_calf">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
   </gazebo>
-  <gazebo reference="FL_foot">
+  <gazebo reference="left_forward_foot">
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
@@ -139,12 +139,12 @@
     <kd value="1.0"/>
   </gazebo>
   <!-- FR leg -->
-  <gazebo reference="FR_hip">
+  <gazebo reference="right_forward_hip">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/DarkGrey</material>
   </gazebo>
-  <gazebo reference="FR_thigh">
+  <gazebo reference="right_forward_thigh">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
@@ -152,12 +152,12 @@
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
-  <gazebo reference="FR_calf">
+  <gazebo reference="right_forward_calf">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
   </gazebo>
-  <gazebo reference="FR_foot">
+  <gazebo reference="right_forward_foot">
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
@@ -166,12 +166,12 @@
     <kd value="1.0"/>
   </gazebo>
   <!-- RL leg -->
-  <gazebo reference="RL_hip">
+  <gazebo reference="left_back_hip">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/DarkGrey</material>
   </gazebo>
-  <gazebo reference="RL_thigh">
+  <gazebo reference="left_back_thigh">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
@@ -179,12 +179,12 @@
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
-  <gazebo reference="RL_calf">
+  <gazebo reference="left_back_calf">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
   </gazebo>
-  <gazebo reference="RL_foot">
+  <gazebo reference="left_back_foot">
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
@@ -193,12 +193,12 @@
     <kd value="1.0"/>
   </gazebo>
   <!-- RR leg -->
-  <gazebo reference="RR_hip">
+  <gazebo reference="right_back_hip">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <material>Gazebo/DarkGrey</material>
   </gazebo>
-  <gazebo reference="RR_thigh">
+  <gazebo reference="right_back_thigh">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
@@ -206,12 +206,12 @@
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
-  <gazebo reference="RR_calf">
+  <gazebo reference="right_back_calf">
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
     <self_collide>1</self_collide>
   </gazebo>
-  <gazebo reference="RR_foot">
+  <gazebo reference="right_back_foot">
     <mu1>0.6</mu1>
     <mu2>0.6</mu2>
     <self_collide>1</self_collide>
