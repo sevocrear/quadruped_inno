@@ -51,7 +51,7 @@
       xyz="${joint_xyz}"
       rpy="${joint_rpy}" />
     <parent
-      link="body" />
+      link="trunk" />
     <child
       link="${link_prefix}_motor" />
     <axis
@@ -60,10 +60,10 @@
   </xacro:macro>
 
 
-  <!-- LEFT LEG -->
-  <xacro:macro name="right_leg" params="link_prefix joint_xyz joint_rpy">
+  <!-- LEFT HIP -->
+  <xacro:macro name="right_hip" params="link_prefix joint_xyz joint_rpy">
   <link
-    name="${link_prefix}_leg">
+    name="${link_prefix}_hip">
     <inertial>
       <origin
         xyz="-0.0029169 0.00012334 -0.001118"
@@ -103,7 +103,7 @@
     </collision>
   </link>
   <joint
-    name="${link_prefix}_motor_leg"
+    name="${link_prefix}_hip_joint"
     type="revolute">
     <origin
       xyz="${joint_xyz}"
@@ -111,7 +111,7 @@
     <parent
       link="${link_prefix}_motor" />
     <child
-      link="${link_prefix}_leg" />
+      link="${link_prefix}_hip" />
     <axis
       xyz="0 0 -1" />
     <limit
@@ -123,10 +123,10 @@
   </joint>
   </xacro:macro>
 
-  <!--  RIGHT HIP -->
-  <xacro:macro name="right_hip" params="link_prefix joint_xyz joint_rpy">
+  <!--  RIGHT THIGH -->
+  <xacro:macro name="right_thigh" params="link_prefix joint_xyz joint_rpy">
   <link
-    name="${link_prefix}_hip">
+    name="${link_prefix}_thigh">
     <inertial>
       <origin
         xyz="-0.00011894 0.010505 0.036923"
@@ -166,15 +166,15 @@
     </collision>
   </link>
   <joint
-    name="${link_prefix}_leg_hip"
+    name="${link_prefix}_thigh_joint"
     type="revolute">
     <origin
       xyz="${joint_xyz}"
       rpy="${joint_rpy}"/>
     <parent
-      link="${link_prefix}_leg" />
-    <child
       link="${link_prefix}_hip" />
+    <child
+      link="${link_prefix}_thigh" />
     <axis
       xyz="0 0 -1" />
     <limit
@@ -230,13 +230,13 @@
     </collision>
   </link>
   <joint
-    name="${link_prefix}_hip_calf"
+    name="${link_prefix}_calf_joint"
     type="revolute">
     <origin
       xyz="${joint_xyz}"
       rpy="${joint_rpy}"/>
     <parent
-      link="${link_prefix}_hip" />
+      link="${link_prefix}_thigh" />
     <child
       link="${link_prefix}_calf" />
     <axis
@@ -291,7 +291,7 @@
     </collision>
   </link>
   <joint
-    name="${link_prefix}_calf_foot"
+    name="${link_prefix}_foot_fixed"
     type="fixed">
     <origin
       xyz="0.003139 0.17761 0.013"

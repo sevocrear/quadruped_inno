@@ -9,63 +9,63 @@ quadruped:
   # First Left Leg
   FL_hip_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_forward_motor_leg
+    joint: left_forward_hip_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   FL_thigh_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_forward_leg_hip
+    joint: left_forward_thigh_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   FL_calf_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_forward_hip_calf
+    joint: left_forward_calf_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   # First Right Leg
   FR_hip_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_forward_motor_leg
+    joint: right_forward_hip_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   FR_thigh_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_forward_leg_hip
+    joint: right_forward_thigh_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   FR_calf_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_forward_hip_calf
+    joint: right_forward_calf_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   #Back Left Leg
   RL_hip_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_back_motor_leg
+    joint: left_back_hip_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   RL_thigh_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_back_leg_hip
+    joint: left_back_thigh_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   RL_calf_position_controller:
     type: effort_controllers/JointPositionController
-    joint: left_back_hip_calf
+    joint: left_back_calf_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   # Back Right Leg
   RR_hip_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_back_motor_leg
+    joint: right_back_hip_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   RR_thigh_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_back_leg_hip
+    joint: right_back_thigh_joint
     pid: {p: 100, d: 0.9, i: 0}
 
   RR_calf_position_controller:
     type: effort_controllers/JointPositionController
-    joint: right_back_hip_calf
+    joint: right_back_calf_joint
     pid: {p: 100, d: 0.9, i: 0}      

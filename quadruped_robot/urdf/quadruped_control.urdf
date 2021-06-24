@@ -3,7 +3,7 @@
 <xacro:include filename="$(find quadruped_robot)/urdf/quadruped_robot.urdf"/>
   <transmission name="tran0">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_forward_motor_leg">
+    <joint name="right_forward_hip_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FR_hip_motor">
@@ -14,7 +14,7 @@
   </transmission>
   <transmission name="tran1">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_forward_leg_hip">
+    <joint name="right_forward_thigh_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FR_thigh_motor">
@@ -25,7 +25,7 @@
   </transmission>
   <transmission name="tran2">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_forward_hip_calf">
+    <joint name="right_forward_calf_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FR_calf_motor">
@@ -36,7 +36,7 @@
   </transmission>
   <transmission name="tran3">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_forward_motor_leg">
+    <joint name="left_forward_hip_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FL_hip_motor">
@@ -47,7 +47,7 @@
   </transmission>
   <transmission name="tran4">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_forward_leg_hip">
+    <joint name="left_forward_thigh_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FL_thigh_motor">
@@ -58,7 +58,7 @@
   </transmission>
   <transmission name="tran5">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_forward_hip_calf">
+    <joint name="left_forward_calf_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="FL_calf_motor">
@@ -69,7 +69,7 @@
   </transmission>
   <transmission name="tran6">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_back_motor_leg">
+    <joint name="right_back_hip_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RR_hip_motor">
@@ -80,7 +80,7 @@
   </transmission>
   <transmission name="tran7">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_back_leg_hip">
+    <joint name="right_back_thigh_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RR_thigh_motor">
@@ -91,7 +91,7 @@
   </transmission>
   <transmission name="tran8">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="right_back_hip_calf">
+    <joint name="right_back_calf_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RR_calf_motor">
@@ -102,7 +102,7 @@
   </transmission>
   <transmission name="tran9">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_back_motor_leg">
+    <joint name="left_back_hip_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RL_hip_motor">
@@ -113,7 +113,7 @@
   </transmission>
   <transmission name="tran10">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_back_leg_hip">
+    <joint name="left_back_thigh_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RL_thigh_motor">
@@ -124,7 +124,7 @@
   </transmission>
   <transmission name="tran11">
     <type>transmission_interface/SimpleTransmission</type>
-    <joint name="left_back_hip_calf">
+    <joint name="left_back_calf_joint">
       <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="RL_calf_motor">

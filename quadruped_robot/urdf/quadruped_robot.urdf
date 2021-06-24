@@ -6,6 +6,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="quadruped_robot">
 
 <!-- Include left leg xacro macroses -->
+<xacro:include filename="$(find quadruped_robot)/urdf/quadruped_robot_references.urdf"/>
 <xacro:include filename="$(find quadruped_robot)/urdf/left_leg.urdf"/>
 <xacro:include filename="$(find quadruped_robot)/urdf/right_leg.urdf"/>
 
@@ -20,7 +21,7 @@
   </joint> -->
 
   <link
-    name="body">
+    name="trunk">
     <inertial>
       <origin
         xyz="0.00595967385992909 0.00347011518192815 0.000128724144476447"
@@ -60,12 +61,41 @@
     </collision>
   </link>
 
+  <joint name="imu_joint" type="fixed">
+    <parent link="trunk"/>
+    <child link="imu_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </joint>
+
+  <link name="imu_link">
+    <inertial>
+      <mass value="0.001"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size=".001 .001 .001"/>
+      </geometry>
+    </collision>
+  </link>
+
+
+
   <!-- LEFT FORWARD LEG -->
   <xacro:left_motor link_prefix="left_forward" joint_xyz="0.065 -0.178 0" joint_rpy="1.5708 0 0" /> 
 
-  <xacro:left_leg link_prefix="left_forward" joint_xyz="0 0 0.057" joint_rpy="0 0 0" /> 
+  <xacro:left_hip link_prefix="left_forward" joint_xyz="0 0 0.057" joint_rpy="0 0 0" /> 
 
-  <xacro:left_hip link_prefix="left_forward" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
+  <xacro:left_thigh link_prefix="left_forward" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
 
   <xacro:left_calf link_prefix="left_forward" joint_xyz="0 -0.208 0.068" joint_rpy="0 0 3.1416" /> 
 
@@ -74,9 +104,9 @@
 
   <xacro:left_motor link_prefix="right_back" joint_xyz="-0.065 0.178 0" joint_rpy="1.5708 0 3.1416" /> 
 
-  <xacro:left_leg link_prefix="right_back" joint_xyz="0 0 0.057" joint_rpy="0 0 0" /> 
+  <xacro:left_hip link_prefix="right_back" joint_xyz="0 0 0.057" joint_rpy="0 0 0" /> 
 
-  <xacro:left_hip link_prefix="right_back" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
+  <xacro:left_thigh link_prefix="right_back" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
 
   <xacro:left_calf link_prefix="right_back" joint_xyz="0 -0.208 0.068" joint_rpy="0 0 3.1416" /> 
 
@@ -88,9 +118,9 @@
 
   <xacro:right_motor link_prefix="left_back" joint_xyz="0.065 0.178 0" joint_rpy="-1.5707963267949 0 0" /> 
 
-  <xacro:right_leg link_prefix="left_back" joint_xyz="0 0 0.057" joint_rpy="0 0 0" />
+  <xacro:right_hip link_prefix="left_back" joint_xyz="0 0 0.057" joint_rpy="0 0 0" />
 
-  <xacro:right_hip link_prefix="left_back" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
+  <xacro:right_thigh link_prefix="left_back" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
 
   <xacro:right_calf link_prefix="left_back" joint_xyz="-0.003139 0.20789 0.055" joint_rpy="0 0 0" /> 
   
@@ -98,9 +128,9 @@
 
   <xacro:right_motor link_prefix="right_forward" joint_xyz="-0.065 -0.178 0" joint_rpy="-1.5707963267949 0 3.1416" /> 
 
-  <xacro:right_leg link_prefix="right_forward" joint_xyz="0 0 0.057" joint_rpy="0 0 0" />
+  <xacro:right_hip link_prefix="right_forward" joint_xyz="0 0 0.057" joint_rpy="0 0 0" />
 
-  <xacro:right_hip link_prefix="right_forward" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
+  <xacro:right_thigh link_prefix="right_forward" joint_xyz="0.01425 0 0" joint_rpy="0 1.5708 0" /> 
 
   <xacro:right_calf link_prefix="right_forward" joint_xyz="-0.003139 0.20789 0.055" joint_rpy="0 0 0" /> 
 

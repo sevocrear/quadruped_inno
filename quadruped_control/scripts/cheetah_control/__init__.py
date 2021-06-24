@@ -20,10 +20,10 @@ class cheetah_control():
         time.sleep(self.time_pause_before_control)
 
         # Declare the joint names of each leg
-        self.LB_leg = ['left_back_motor_leg','left_back_leg_hip', 'left_back_hip_calf']
-        self.RB_leg = ['right_back_motor_leg','right_back_leg_hip', 'right_back_hip_calf']
-        self.LF_leg = ['left_forward_motor_leg','left_forward_leg_hip', 'left_forward_hip_calf']
-        self.RF_leg = ['right_forward_motor_leg','right_forward_leg_hip', 'right_forward_hip_calf']
+        self.LB_leg = ['left_back_hip_joint','left_back_thigh_joint', 'left_back_calf_joint']
+        self.RB_leg = ['right_back_hip_joint','right_back_thigh_joint', 'right_back_calf_joint']
+        self.LF_leg = ['left_forward_hip_joint','left_forward_thigh_joint', 'left_forward_calf_joint']
+        self.RF_leg = ['right_forward_hip_joint','right_forward_thigh_joint', 'right_forward_calf_joint']
         
         self.joints = {'FL_hip': [self.LF_leg[0]],
                        'FL_thigh': [self.LF_leg[1]],
@@ -113,10 +113,10 @@ class cheetah_control():
         link_twists = dict(
             zip(cheetah_links_pos.name, cheetah_links_pos.twist))
 
-        self.body_position = link_poses['quadruped_robot::body'].position
-        self.body_orientation = link_poses['quadruped_robot::body'].orientation
-        self.body_twist_angular = link_twists['quadruped_robot::body'].angular
-        self.body_twist_linear = link_twists['quadruped_robot::body'].linear
+        self.body_position = link_poses['quadruped_robot::trunk'].position
+        self.body_orientation = link_poses['quadruped_robot::trunk'].orientation
+        self.body_twist_angular = link_twists['quadruped_robot::trunk'].angular
+        self.body_twist_linear = link_twists['quadruped_robot::trunk'].linear
 
     def update_PD(self, Kp, Kd):
         if self.use_ros:
