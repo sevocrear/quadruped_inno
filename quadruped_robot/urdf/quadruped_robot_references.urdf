@@ -5,6 +5,14 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="quadruped_robot">
 <!-- IMU -->
+
+<gazebo>
+    <plugin filename="libgazebo_ros_force.so" name="gazebo_ros_force">
+      <bodyName>trunk</bodyName>
+      <topicName>/apply_force/trunk</topicName>
+    </plugin>
+</gazebo>
+
  <gazebo reference="imu_link">
     <gravity>true</gravity>
     <sensor name="imu_sensor" type="imu">

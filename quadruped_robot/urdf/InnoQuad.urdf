@@ -5,6 +5,12 @@
 <!-- =================================================================================== -->
 <robot name="quadruped_robot">
   <!-- IMU -->
+  <gazebo>
+    <plugin filename="libgazebo_ros_force.so" name="gazebo_ros_force">
+      <bodyName>trunk</bodyName>
+      <topicName>/apply_force/trunk</topicName>
+    </plugin>
+  </gazebo>
   <gazebo reference="imu_link">
     <gravity>true</gravity>
     <sensor name="imu_sensor" type="imu">
@@ -95,10 +101,8 @@
     <turnGravityOff>false</turnGravityOff>
   </gazebo>
   <gazebo reference="trunk">
-    <!-- Friction coefficients μ for the principal contact directions along the contact surface -->
     <mu1>0.2</mu1>
     <mu2>0.2</mu2>
-    <!-- Contact stiffness k_p and damping k_d for rigid body contacts -->
     <kp value="1000000.0"/>
     <kd value="1.0"/>
   </gazebo>
