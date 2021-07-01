@@ -2,25 +2,29 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import sys
+import numpy as np
 abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 # https://www.codespeedy.com/visualize-data-from-csv-file-in-python/
 
-name = "A_0_075_w_3_14"
+name = "11_57_17_01_07_2021"
 csv_file = f"{name}.csv"
 df_data = pd.read_csv(csv_file)
 
 # thigh, thigh, thigh
-data_to_show = ["U",""]
+data_to_show = ["q",""]
 
-RB_thigh_angles_cur = df_data[f'RB_leg_thigh_{data_to_show[0]}_cur{data_to_show[1]}']
-RB_thigh_angles_des = df_data[f'RB_leg_thigh_{data_to_show[0]}_des{data_to_show[1]}']
+leg = "LB_leg"
+RB_thigh_angles_cur = df_data[f'{leg}_thigh_{data_to_show[0]}_cur{data_to_show[1]}']
+RB_thigh_angles_des = df_data[f'{leg}_thigh_{data_to_show[0]}_des{data_to_show[1]}']
 time = df_data['time']
 RB_thigh_angles_error = RB_thigh_angles_des.subtract(RB_thigh_angles_cur, fill_value = 0)
 
-RB_knee_angles_cur = df_data[f'RB_leg_knee_{data_to_show[0]}_cur{data_to_show[1]}']
-RB_knee_angles_des = df_data[f'RB_leg_knee_{data_to_show[0]}_des{data_to_show[1]}']
+
+
+RB_knee_angles_cur = df_data[f'{leg}_knee_{data_to_show[0]}_cur{data_to_show[1]}']
+RB_knee_angles_des = df_data[f'{leg}_knee_{data_to_show[0]}_des{data_to_show[1]}']
 RB_knee_angles_error = RB_knee_angles_des.subtract(RB_knee_angles_cur, fill_value = 0)
 
 fig, ax = plt.subplots(2, 1)
@@ -44,3 +48,8 @@ ax[1].legend()
 
 plt.show()
 fig.savefig(f"plots/{data_to_show[0]}_{data_to_show[1]}_{name}.svg", format="svg", dpi=300)
+
+squared_error = list(map(lambda x: x**2, RB_knee_angles_error))
+squared_error = list(filter(lambda x: not pd.isna(x), squared_error))
+RMSE = np.sqrt(np.mean(squared_error))
+print(RMSE)

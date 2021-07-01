@@ -137,26 +137,26 @@ def control_main(shared_variables, use_ros, use_input_traj, shared_t = None, sha
                 spine.transfer_and_receive()
 
             # UNCOMMENT IF YOU WANT TO RECORD DATA
-            # shared_t.value = t
-            # shared_q_cur['LF_leg'] = q_cur['LF_leg']
-            # shared_q_cur['RF_leg'] = q_cur['RF_leg']
-            # shared_q_cur['LB_leg'] = q_cur['LB_leg']
-            # shared_q_cur['RB_leg'] = q_cur['RB_leg']
+            shared_t.value = t
+            shared_q_cur['LF_leg'] = q_cur['LF_leg']
+            shared_q_cur['RF_leg'] = q_cur['RF_leg']
+            shared_q_cur['LB_leg'] = q_cur['LB_leg']
+            shared_q_cur['RB_leg'] = q_cur['RB_leg']
 
-            # shared_q_des['LF_leg'] = q_des['LF_leg']
-            # shared_q_des['RF_leg'] = q_des['RF_leg']
-            # shared_q_des['LB_leg'] = q_des['LB_leg']
-            # shared_q_des['RB_leg'] = q_des['RB_leg']
+            shared_q_des['LF_leg'] = q_des['LF_leg']
+            shared_q_des['RF_leg'] = q_des['RF_leg']
+            shared_q_des['LB_leg'] = q_des['LB_leg']
+            shared_q_des['RB_leg'] = q_des['RB_leg']
 
-            # shared_q_dot_cur['LF_leg'] = q_dot_cur['LF_leg']
-            # shared_q_dot_cur['RF_leg'] = q_dot_cur['RF_leg']
-            # shared_q_dot_cur['LB_leg'] = q_dot_cur['LB_leg']
-            # shared_q_dot_cur['RB_leg'] = q_dot_cur['RB_leg']
+            shared_q_dot_cur['LF_leg'] = q_dot_cur['LF_leg']
+            shared_q_dot_cur['RF_leg'] = q_dot_cur['RF_leg']
+            shared_q_dot_cur['LB_leg'] = q_dot_cur['LB_leg']
+            shared_q_dot_cur['RB_leg'] = q_dot_cur['RB_leg']
 
-            # shared_q_dot_des['LF_leg'] = q_dot_des['LF_leg']
-            # shared_q_dot_des['RF_leg'] = q_dot_des['RF_leg']
-            # shared_q_dot_des['LB_leg'] = q_dot_des['LB_leg']
-            # shared_q_dot_des['RB_leg'] = q_dot_des['RB_leg']
+            shared_q_dot_des['LF_leg'] = q_dot_des['LF_leg']
+            shared_q_dot_des['RF_leg'] = q_dot_des['RF_leg']
+            shared_q_dot_des['LB_leg'] = q_dot_des['LB_leg']
+            shared_q_dot_des['RB_leg'] = q_dot_des['RB_leg']
             if use_ros:
                 cheetah_control_pos.rate.sleep()
         except rospy.ROSInterruptException:
@@ -211,24 +211,24 @@ if __name__ == '__main__':
     manager = Manager()
     shared_variables = manager.Array('f', [1,1,1, 0,0,0, 0,0,0.425, 0,0,0 ]) # Kp,Kd, xyz, RPY
     # UNCOMMENT BELOW VARIABLES IF YOU WANT TO RECORD
-    # shared_q_cur = manager.dict()
-    # shared_q_des = manager.dict()
-    # shared_q_dot_cur = manager.dict()
-    # shared_q_dot_des = manager.dict()
-    # shared_t = manager.Value('d', 0)
+    shared_q_cur = manager.dict()
+    shared_q_des = manager.dict()
+    shared_q_dot_cur = manager.dict()
+    shared_q_dot_des = manager.dict()
+    shared_t = manager.Value('d', 0)
     process_control = Process(target = control_main, args = [shared_variables, use_ros,use_input_traj,
-                                                            #  shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des #uncomment if you want to record data
+                                                             shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des #uncomment if you want to record data
                                                              ])
                                                             
     process_GUI = Process(target = tk_reconfigure_xyz_rpy, args = [shared_variables])
-    # process_save_data = Process(target = saving_data, args = [shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des])
+    process_save_data = Process(target = saving_data, args = [shared_t, shared_q_cur, shared_q_des, shared_q_dot_cur, shared_q_dot_des])
     process_control.start()
     if not use_ros:
         process_GUI.start()
-    # process_save_data.start()
+    process_save_data.start()
     process_control.join()
     if not use_ros:
         process_GUI.join()
-    # process_save_data.join()
+    process_save_data.join()
 
 
